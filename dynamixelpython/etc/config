@@ -1,0 +1,55 @@
+# Endpoints for implemented interfaces
+JointMotor.Endpoints=tcp -p 20000
+
+DynamixelComp.Endpoints=tcp -p 10067
+CommonBehavior.Endpoints=tcp -p 11067
+
+Dynamixel.Device=/dev/ttyUSB0
+Dynamixel.BaudRate=1000000
+Dynamixel.BasicPeriod=50
+Dynamixel.SDK=true
+Dynamixel.NumMotors=18
+
+
+#Dynamixel.Params  =   Name, BusId, InvertedSign, MinPos, MaxPos, zero, maxVel, steps/relovution, MaxDegrees
+Dynamixel.Params_0 =arm5motor1,7,true,-0.1,3.1,150,8,1024,300
+Dynamixel.Params_1 =arm5motor2,9,false,-0.1,3.1,150,8,1024,300
+Dynamixel.Params_2 =arm5motor3,11,false,-0.1,3.1,150,8,1024,300
+
+Dynamixel.Params_3 =arm6motor1,8,true,-0.1,3.1,150,8,1024,300
+Dynamixel.Params_4 =arm6motor2,10,false,-0.1,3.1,150,8,1024,300
+Dynamixel.Params_5 =arm6motor3,12,false,-0.1,3.1,150,8,1024,300
+
+Dynamixel.Params_6 =arm3motor1,13,true,-0.1,3.1,150,8,1024,300
+Dynamixel.Params_7 =arm3motor2,15,false,-0.1,3.1,150,8,1024,300
+Dynamixel.Params_8 =arm3motor3,17,false,-0.1,3.1,150,8,1024,300
+
+
+Dynamixel.Params_9  =arm4motor1,14,true,-0.1,3.1,150,8,1024,300
+Dynamixel.Params_10 =arm4motor2,16,false,-0.1,3.1,150,8,1024,300
+Dynamixel.Params_11 =arm4motor3,18,false,-0.1,3.1,150,8,1024,300
+
+
+Dynamixel.Params_12 =arm2motor1,2,true,-0.1,3.1,150,8,1024,300
+Dynamixel.Params_13 =arm2motor2,4,false,-0.1,3.1,150,8,1024,300
+Dynamixel.Params_14 =arm2motor3,6,false,-0.1,3.1,150,8,1024,300
+
+
+Dynamixel.Params_15 =arm1motor1,1,true,-0.1,3.1,150,8,1024,300
+Dynamixel.Params_16 =arm1motor2,3,false,-0.1,3.1,150,8,1024,300
+Dynamixel.Params_17 =arm1motor3,5,false,-0.1,3.1,150,8,1024,300
+
+
+# Component properties
+# Warn about connection exceptions
+Ice.Warn.Connections=0
+#
+# Network Tracing
+Ice.Trace.Network=0
+#
+# Protocol Tracing
+Ice.Trace.Protocol=0
+#
+# We want a faster ACM
+Ice.ACM.Client=10
+Ice.ACM.Server=10

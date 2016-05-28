@@ -1,0 +1,26 @@
+CommonBehavior.Endpoints=tcp -p 11005
+
+
+# Endpoints for implemented interfaces
+LegController.Endpoints=tcp -p 18005
+
+
+# Proxies for required interfaces
+JointMotor1Proxy = jointmotor:tcp -h odroid.local -p 20000
+JointMotor2Proxy = jointmotor:tcp -h localhost -p 20000
+
+LegControllerComp.InnerModel=/home/robocomp/robocomp/files/innermodel/hexapod.xml
+LegControllerComp.name = arm5
+LegControllerComp.m1 = arm5motor1
+LegControllerComp.m2 = arm5motor2
+LegControllerComp.m3 = arm5motor3
+LegControllerComp.foot=arm5TipT
+LegControllerComp.singleg= -1
+
+Ice.Warn.Connections=0
+Ice.Trace.Network=0
+Ice.Trace.Protocol=0
+Ice.ACM.Client=10
+Ice.ACM.Server=10
+
+

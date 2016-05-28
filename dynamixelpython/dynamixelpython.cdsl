@@ -1,0 +1,11 @@
+import "/robocomp/interfaces/IDSLs/JointMotor.idsl";
+
+Component dynamixelpython
+{
+	Communications
+	{
+		implements JointMotor;
+	};
+	language Python;
+};
+

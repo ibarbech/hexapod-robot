@@ -1,0 +1,16 @@
+import "/robocomp/interfaces/IDSLs/LegController.idsl";
+//import "/robocomp/interfaces/IDSLs/JoystickAdapter.idsl";
+
+Component hexapodController
+{
+	Communications
+	{
+		//implements interfaceName;
+		requires LegController,LegController,LegController,LegController,LegController,LegController;
+		//subscribesTo JoystickAdapter;
+		//publishes topicToPublish;
+	};
+	language Cpp;
+	gui Qt(QWidget);
+};
+

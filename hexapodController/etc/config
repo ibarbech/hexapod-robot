@@ -1,0 +1,20 @@
+CommonBehavior.Endpoints=tcp -p 1
+
+
+# Proxies for required interfaces
+LegController1Proxy = legcontroller:tcp -h localhost -p 0
+LegController2Proxy = legcontroller:tcp -h localhost -p 0
+LegController3Proxy = legcontroller:tcp -h localhost -p 0
+LegController4Proxy = legcontroller:tcp -h localhost -p 0
+LegController5Proxy = legcontroller:tcp -h localhost -p 0
+LegController6Proxy = legcontroller:tcp -h localhost -p 0
+
+
+
+Ice.Warn.Connections=0
+Ice.Trace.Network=0
+Ice.Trace.Protocol=0
+Ice.ACM.Client=10
+Ice.ACM.Server=10
+
+
