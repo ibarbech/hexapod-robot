@@ -1,12 +1,13 @@
 import "/robocomp/interfaces/IDSLs/JointMotor.idsl";
 import "/robocomp/interfaces/IDSLs/LegController.idsl";
 import "/robocomp/interfaces/IDSLs/FootPreassureSensor.idsl";
+import "/robocomp/interfaces/IDSLs/IMU.idsl";
 
 Component LegControllerComp
 {
 	Communications
 	{
-		requires JointMotor, FootPreassureSensor;
+		requires JointMotor, FootPreassureSensor, IMU;
 		implements LegController;
 	};
 	language Cpp;

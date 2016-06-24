@@ -85,6 +85,7 @@
 #include <JointMotor.h>
 #include <LegController.h>
 #include <FootPreassureSensor.h>
+#include <IMU.h>
 
 
 // User includes here
@@ -96,6 +97,7 @@ using namespace RoboCompCommonBehavior;
 using namespace RoboCompJointMotor;
 using namespace RoboCompLegController;
 using namespace RoboCompFootPreassureSensor;
+using namespace RoboCompIMU;
 
 
 
@@ -136,6 +138,7 @@ int ::LegControllerComp::run(int argc, char* argv[])
 	int status=EXIT_SUCCESS;
 
 	FootPreassureSensorPrx footpreassuresensor_proxy;
+	IMUPrx imu_proxy;
 	JointMotorPrx jointmotor_proxy;
 
 	string proxy, tmp;
@@ -157,6 +160,23 @@ int ::LegControllerComp::run(int argc, char* argv[])
 	}
 	rInfo("FootPreassureSensorProxy initialized Ok!");
 	mprx["FootPreassureSensorProxy"] = (::IceProxy::Ice::Object*)(&footpreassuresensor_proxy);//Remote server proxy creation example
+
+
+	try
+	{
+		if (not GenericMonitor::configGetString(communicator(), prefix, "IMUProxy", proxy, ""))
+		{
+			cout << "[" << PROGRAM_NAME << "]: Can't read configuration for proxy IMUProxy\n";
+		}
+		imu_proxy = IMUPrx::uncheckedCast( communicator()->stringToProxy( proxy ) );
+	}
+	catch(const Ice::Exception& ex)
+	{
+		cout << "[" << PROGRAM_NAME << "]: Exception: " << ex;
+		return EXIT_FAILURE;
+	}
+	rInfo("IMUProxy initialized Ok!");
+	mprx["IMUProxy"] = (::IceProxy::Ice::Object*)(&imu_proxy);//Remote server proxy creation example
 
 
 	try

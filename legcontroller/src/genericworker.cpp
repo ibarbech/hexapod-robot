@@ -64,6 +64,7 @@ QObject()
 //------------------
 	footpreassuresensor_proxy = (*(FootPreassureSensorPrx*)mprx["FootPreassureSensorProxy"]);
 	jointmotor_proxy = (*(JointMotorPrx*)mprx["JointMotorProxy"]);
+	imu_proxy = (*(IMUPrx*)mprx["IMUProxy"]);
 
 
 	mutex = new QMutex(QMutex::Recursive);

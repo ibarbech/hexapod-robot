@@ -28,6 +28,7 @@
 #include <qt4/QtCore/qstate.h>
 #include <CommonBehavior.h>
 #include <LegController.h>
+#include <IMU.h>
 #include <JointMotor.h>
 #include <FootPreassureSensor.h>
 
@@ -41,6 +42,7 @@ typedef map <string,::IceProxy::Ice::Object*> MapPrx;
 using namespace std;
 
 using namespace RoboCompLegController;
+using namespace RoboCompIMU;
 using namespace RoboCompJointMotor;
 using namespace RoboCompFootPreassureSensor;
 
@@ -63,6 +65,7 @@ public:
 
 	FootPreassureSensorPrx footpreassuresensor_proxy;
 	JointMotorPrx jointmotor_proxy;
+	IMUPrx imu_proxy;
 
 	virtual StateLeg getStateLeg() = 0;
 	virtual bool move(const float x, const float y) = 0;
