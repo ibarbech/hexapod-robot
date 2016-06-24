@@ -1,0 +1,29 @@
+hexapod{
+    states avanzar, error_imu, error_timeout;
+    initial_state recibe_ofset;
+    transition{
+        avanzar => recibe_ofset, error_timeout, error_imu;
+	recibe_ofset => avanzar;
+	error_timeout => recibe_ofset;
+	error_imu => recibe_ofset;
+    };
+};
+
+:avanzar parallel{
+    states leer_imu, leer_sensores, avanzar_principal;
+    transition{
+        leer_imu => leer_imu;
+	leer_sensores => leer_sensores;
+    };
+};
+
+:avanzar_principal{
+    states calcular_subobj, moverse;
+    initial_state calcular_obj;
+    end_state exit;
+    transition{
+        calcular_obj => moverse;
+	moverse => moverse, calcular_subobj, exit;
+	calcular_subobj => moverse;
+    };
+};
