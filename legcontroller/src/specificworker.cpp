@@ -84,6 +84,7 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 	qDebug()<<"-----------------------------";
 	
 	pos_foot =inner->transform(floor,foot);
+	moverangles(QVec::vec3(0,0.3,0.7),0);
 	hexapod.start();
 	timer.start(Period);
 	return true;
