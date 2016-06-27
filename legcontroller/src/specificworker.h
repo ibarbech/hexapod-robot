@@ -53,6 +53,20 @@ public slots:
 	void compute();
 
 private:
+	InnerModel *inner;
+	string innerpath;
+	QStringList motores;
+	QString foot,floor,base,nameLeg;
+	double  coxa, femur, tibia;
+	int signleg;
+	QVec pos_foot;
+	
+	RoboCompJointMotor::MotorStateMap statemap;
+	QMap<string,RoboCompJointMotor::MotorParams> motorsparams;
+	
+	void moverangles(QVec angles,double vel);
+	QVec movFoottoPoint(QVec p, bool &exito);
+	void stabilize();
 
 private slots:
 //Specification slot funtions State Machine

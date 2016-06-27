@@ -43,7 +43,6 @@ QObject()
 	hexapod.addState(error_imu);
 	hexapod.addState(error_timeout);
 	hexapod.addState(recibe_ofset);
-	hexapod.addState(n);
 
 	hexapod.setInitialState(recibe_ofset);
 	avanzar_principal->setInitialState(calcular_obj);
@@ -52,7 +51,6 @@ QObject()
 	QObject::connect(error_imu, SIGNAL(entered()), this, SLOT(fun_error_imu()));
 	QObject::connect(error_timeout, SIGNAL(entered()), this, SLOT(fun_error_timeout()));
 	QObject::connect(recibe_ofset, SIGNAL(entered()), this, SLOT(fun_recibe_ofset()));
-	QObject::connect(n, SIGNAL(entered()), this, SLOT(fun_n()));
 	QObject::connect(leer_imu, SIGNAL(entered()), this, SLOT(fun_leer_imu()));
 	QObject::connect(leer_sensores, SIGNAL(entered()), this, SLOT(fun_leer_sensores()));
 	QObject::connect(avanzar_principal, SIGNAL(entered()), this, SLOT(fun_avanzar_principal()));

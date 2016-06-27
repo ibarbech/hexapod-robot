@@ -85,6 +85,58 @@ bool SpecificMonitor::sendParamsToWorker(RoboCompCommonBehavior::ParameterList p
 ///We need to supply a list of accepted values to each call
 void SpecificMonitor::readConfig(RoboCompCommonBehavior::ParameterList &params )
 {
+	RoboCompCommonBehavior::Parameter aux;
+	aux.editable = true;
+	bool defaulterror=false;
+	string name = PROGRAM_NAME;
+	configGetString("",name+".name", aux.value, "default");
+	params[name+".name"] = aux;
+	configGetString("",name+".floor", aux.value, "floor");
+	params[name+".floor"] = aux;
+	
+	configGetString("",name+".base", aux.value, "base");
+	params[name+".base"] = aux;
+	
+	configGetString("",name+".InnerModel", aux.value, "default");
+	params[name+".InnerModel"] = aux;
+	if(aux.value=="default")
+	{
+		qDebug()<<"Error de configuracion: InnerModelPath";
+		defaulterror=true;
+	}
+	configGetString("",name+".m1", aux.value, "default");
+	params[name+".m1"] = aux;
+	if(aux.value=="default")
+	{
+		qDebug()<<"Error de configuracion: m1";
+		defaulterror=true;
+	}
+	configGetString("",name+".m2", aux.value, "default");
+	params[name+".m2"] = aux;
+	if(aux.value=="default")
+	{
+		qDebug()<<"Error de configuracion: m2";
+		defaulterror=true;
+	}
+	configGetString("",name+".m3", aux.value, "default");
+	params[name+".m3"] = aux;
+	if(aux.value=="default")
+	{
+		qDebug()<<"Error de configuracion: m3";
+		defaulterror=true;
+	}
+	configGetString("",name+".foot", aux.value, "default");
+	params[name+".foot"] = aux;
+	if(aux.value=="default")
+	{
+		qDebug()<<"Error de configuracion: foot";
+		defaulterror=true;
+	}
+	configGetString("",name+".singleg", aux.value, "1");
+	params[name+".singleg"] = aux;
+	
+	if(defaulterror)
+		qFatal("Modifique el archivo de configuracion");
 // 	RoboCompCommonBehavior::Parameter aux;
 // 	aux.editable = true;
 // 	string name = PROGRAM_NAME;

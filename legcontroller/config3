@@ -1,0 +1,27 @@
+CommonBehavior.Endpoints=tcp -p 11003
+
+
+# Endpoints for implemented interfaces
+LegController.Endpoints=tcp -p 18003
+
+
+# Proxies for required interfaces
+FootPreassureSensorProxy = footpreassuresensor:tcp -h localhost -p 0
+JointMotorProxy = jointmotor:tcp -h localhost -p 20000
+IMUProxy = imu:tcp -h localhost -p 10066
+
+LegControllerComp.InnerModel=/home/robocomp/robocomp/files/innermodel/hexapod.xml
+LegControllerComp.name = arm3
+LegControllerComp.m1 = arm3motor1
+LegControllerComp.m2 = arm3motor2
+LegControllerComp.m3 = arm3motor3
+LegControllerComp.foot=arm3TipT
+LegControllerComp.singleg= -1
+
+Ice.Warn.Connections=0
+Ice.Trace.Network=0
+Ice.Trace.Protocol=0
+Ice.ACM.Client=10
+Ice.ACM.Server=10
+
+
