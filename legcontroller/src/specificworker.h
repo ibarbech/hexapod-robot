@@ -57,7 +57,7 @@ private:
 	string innerpath;
 	QStringList motores;
 	QString foot,floor,base,nameLeg;
-	double  coxa, femur, tibia;
+	double  coxa, femur, tibia, rPitch, rRoll;
 	int signleg;
 	QVec pos_foot;
 	

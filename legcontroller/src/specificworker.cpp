@@ -84,7 +84,6 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 	qDebug()<<"-----------------------------";
 	
 	pos_foot =inner->transform(floor,foot);
-	moverangles(QVec::vec3(0,0.3,0.7),0);
 	hexapod.start();
 	timer.start(Period);
 	return true;
@@ -253,7 +252,7 @@ bool SpecificWorker::setIKLeg(const PoseLeg &p, const bool &simu)
 bool SpecificWorker::setIKBody(const PoseBody &p, const bool &simu)
 {
 	//inicio rotar el cuerpo
-// 	InnerModel *inneraux= new InnerModel(innerpath);
+// 	InnerModel *inner= new InnerModel(innerpath);
 	QVec pos=inner->transform(floor, QVec::vec3(p.px,p.py,p.pz), QString::fromStdString(p.ref));
 	inner->updateRotationValues(base, p.rx, p.ry, p.rz,"");
 	//fin rotar el cuerpo
@@ -384,23 +383,23 @@ void SpecificWorker::moverangles(QVec angles,double vel)
 
 void SpecificWorker::stabilize()
 {
+	QVec pos =inner->transform(floor,foot);
 	RoboCompIMU::DataImu d = imu_proxy->getDataImu();
-	if(fabs(d.rot.Pitch)>0.03 || fabs(d.rot.Roll)>0.03){
-		RoboCompLegController::PoseBody p;
-		InnerModelTransform* t= inner->getTransform(base);
-		p.ref = floor.toStdString();
-		p.x = 0;
-		p.y = 0;
-		p.z = 0;
-		p.rx = d.rot.Pitch + t->getRxValue();
-		p.ry = 0;
-		p.rz = d.rot.Roll + t->getRzValue();
-		p.vel = 0;
-		p.px = pos_foot.x();
-		p.pz = pos_foot.z();
-		p.py = pos_foot.y();
-		setIKBody(p,false);
-	}
+	RoboCompLegController::PoseBody p;
+	InnerModelTransform* t = inner->getTransform()->getRxValue();
+	p.ref = floor.toStdString();
+	p.x = 0;
+	p.y = 0;
+	p.z = 0;
+	p.rx = d.rot.Pitch + t->getRxValue();
+	p.ry = 0;
+	p.rz = d.rot.Roll + t->getRzValue();
+	p.vel = 0;
+	p.px = pos.x();
+	p.pz = pos.z();
+	p.py = pos.y();
+	
+	setIKBody(p,false);
 }
 
 
