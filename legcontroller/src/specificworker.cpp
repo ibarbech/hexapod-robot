@@ -256,7 +256,7 @@ bool SpecificWorker::setIKBody(const PoseBody &p, const bool &simu)
 	QVec pos=inner->transform(floor, QVec::vec3(p.px,p.py,p.pz), QString::fromStdString(p.ref));
 	inner->updateRotationValues(base, p.rx, p.ry, p.rz,"");
 	//fin rotar el cuerpo
-	pos=inner->transform(base, pos, floor);
+	pos = inner->transform(base, pos, floor);
 	PoseLeg pl;
 	pl.ref = base.toStdString();
 	pl.x = pos.x() + p.x;
@@ -383,11 +383,11 @@ void SpecificWorker::moverangles(QVec angles,double vel)
 
 void SpecificWorker::stabilize()
 {
-	QVec pos =inner->transform(floor,foot);
+	QVec pos =inner->transform(base,foot);
 	RoboCompIMU::DataImu d = imu_proxy->getDataImu();
 	RoboCompLegController::PoseBody p;
 	InnerModelTransform* t = inner->getTransform()->getRxValue();
-	p.ref = floor.toStdString();
+	p.ref = base.toStdString();
 	p.x = 0;
 	p.y = 0;
 	p.z = 0;
