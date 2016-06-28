@@ -128,12 +128,19 @@ void SpecificWorker::fun_recibe_ofset()
 
 void SpecificWorker::fun_leer_imu()
 {
-
+	RoboCompIMU::Orientation o = imu_proxy->getOrientation();
+	if(fabs(o.Pitch)>0.2||fabs(o.Roll)>0.2)
+		emit avanzartoerror_imu();
+	else
+		emit leer_imutoleer_imu();
 }
 
 void SpecificWorker::fun_leer_sensores()
 {
-
+	if(footpreassuresensor_proxy->readSensor(foot.toStdString())>15)
+		emit avanzartorecibe_ofset();
+	else
+		emit leer_sensorestoleer_sensores();
 }
 
 void SpecificWorker::fun_avanzar_principal()
@@ -386,7 +393,7 @@ void SpecificWorker::stabilize()
 	QVec pos =inner->transform(base,foot);
 	RoboCompIMU::DataImu d = imu_proxy->getDataImu();
 	RoboCompLegController::PoseBody p;
-	InnerModelTransform* t = inner->getTransform()->getRxValue();
+	InnerModelTransform* t = inner->getTransform();
 	p.ref = base.toStdString();
 	p.x = 0;
 	p.y = 0;
