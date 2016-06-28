@@ -393,7 +393,7 @@ void SpecificWorker::stabilize()
 	QVec pos =inner->transform(base,foot);
 	RoboCompIMU::DataImu d = imu_proxy->getDataImu();
 	RoboCompLegController::PoseBody p;
-	InnerModelTransform* t = inner->getTransform();
+	InnerModelTransform* t = inner->getTransform(base);
 	p.ref = base.toStdString();
 	p.x = 0;
 	p.y = 0;
