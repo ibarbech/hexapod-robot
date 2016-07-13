@@ -39,7 +39,7 @@ public:
 	~LegControllerI();
 	
 	StateLeg getStateLeg(const Ice::Current&);
-	bool move(const float  x, const float  y, const Ice::Current&);
+	void move(const float  x, const float  y, const Ice::Current&);
 	bool setListIKLeg(const ListPoseLeg  &ps,  bool  simu, const Ice::Current&);
 	bool setIKLeg(const PoseLeg  &p,  bool  simu, const Ice::Current&);
 	bool setIKBody(const PoseBody  &p,  bool  simu, const Ice::Current&);

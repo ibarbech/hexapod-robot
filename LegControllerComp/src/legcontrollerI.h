@@ -38,8 +38,9 @@ public:
 	LegControllerI( GenericWorker *_worker, QObject *parent = 0 );
 	~LegControllerI();
 	
-	bool setListIKLeg(const ListPoseLeg  &ps,  bool  simu, const Ice::Current&);
 	StateLeg getStateLeg(const Ice::Current&);
+	void move(const float  x, const float  y, const Ice::Current&);
+	bool setListIKLeg(const ListPoseLeg  &ps,  bool  simu, const Ice::Current&);
 	bool setIKLeg(const PoseLeg  &p,  bool  simu, const Ice::Current&);
 	bool setIKBody(const PoseBody  &p,  bool  simu, const Ice::Current&);
 	bool setFKLeg(const AnglesLeg  &al,  bool  simu, const Ice::Current&);

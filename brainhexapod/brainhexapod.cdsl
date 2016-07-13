@@ -1,0 +1,12 @@
+import "/robocomp/interfaces/IDSLs/LegController.idsl";
+
+Component brainhexapod
+{
+	Communications
+	{
+		requires LegController,LegController,LegController,LegController,LegController,LegController;
+	};
+	language Cpp;
+	gui Qt(QWidget);
+};
+

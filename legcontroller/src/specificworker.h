@@ -43,14 +43,13 @@ public:
 	bool setParams(RoboCompCommonBehavior::ParameterList params);
 
 	StateLeg getStateLeg();
-	bool move(const float x, const float y);
+	void move(const float x, const float y);
 	bool setListIKLeg(const ListPoseLeg &ps, const bool &simu);
 	bool setIKLeg(const PoseLeg &p, const bool &simu);
 	bool setIKBody(const PoseBody &p, const bool &simu);
 	bool setFKLeg(const AnglesLeg &al, const bool &simu);
 
 public slots:
-	void compute();
 
 private:
 	InnerModel *inner;
@@ -59,28 +58,24 @@ private:
 	QString foot,floor,base,nameLeg;
 	double  coxa, femur, tibia, rPitch, rRoll;
 	int signleg;
-	QVec pos_foot;
-	
+	QVec pos_foot, pos_center;
+	bool idel;
 	RoboCompJointMotor::MotorStateMap statemap;
 	QMap<string,RoboCompJointMotor::MotorParams> motorsparams;
 	
 	void moverangles(QVec angles,double vel);
 	QVec movFoottoPoint(QVec p, bool &exito);
 	void stabilize();
+	
+	QVec bezier3(QVec p0, QVec p1, QVec p2, float t);
+	QVec bezier2(QVec p0, QVec p2, float t);
+	double mapear(double x, double in_min, double in_max, double out_min, double out_max);
+	void updateinner();
 
 private slots:
 //Specification slot funtions State Machine
-	void fun_avanzar();
-	void fun_error_imu();
-	void fun_error_timeout();
-	void fun_recibe_ofset();
-	void fun_leer_imu();
-	void fun_leer_sensores();
-	void fun_avanzar_principal();
-	void fun_calcular_subobj();
-	void fun_moverse();
-	void fun_calcular_obj();
-	void fun_exit();
+	void fun_paso();
+	void fun_empujar();
 
 //--------------------
 	

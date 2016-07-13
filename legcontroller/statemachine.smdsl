@@ -1,4 +1,13 @@
 hexapod{
+    states empujar;
+    initial_state paso;
+    transition{
+        paso => paso, empujar;
+	empujar => empujar, paso;
+    };
+};
+
+/*hexapod{
     states avanzar, error_imu, error_timeout;
     initial_state recibe_ofset;
     transition{
@@ -26,4 +35,4 @@ hexapod{
 	moverse => moverse, calcular_subobj, exit;
 	calcular_subobj => moverse;
     };
-};
+};*/

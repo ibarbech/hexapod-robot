@@ -24,7 +24,6 @@
 #include <stdint.h>
 #include <qlog/qlog.h>
 
-
 #include <CommonBehavior.h>
 #include <LegController.h>
 #include <JointMotor.h>
@@ -58,17 +57,18 @@ public:
 	QMutex *mutex;
 	
 
-	JointMotorPrx jointmotor1_proxy;
-	JointMotorPrx jointmotor2_proxy;
+	JointMotorPrx jointmotor_proxy;
 
-	virtual bool setListIKLeg(const ListPoseLeg &ps, const bool &simu) = 0;
 	virtual StateLeg getStateLeg() = 0;
+	virtual void move(const float x, const float y) = 0;
+	virtual bool setListIKLeg(const ListPoseLeg &ps, const bool &simu) = 0;
 	virtual bool setIKLeg(const PoseLeg &p, const bool &simu) = 0;
 	virtual bool setIKBody(const PoseBody &p, const bool &simu) = 0;
 	virtual bool setFKLeg(const AnglesLeg &al, const bool &simu) = 0;
 
 
 protected:
+
 	QTimer timer;
 	int Period;
 

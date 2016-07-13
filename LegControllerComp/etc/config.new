@@ -6,8 +6,7 @@ LegController.Endpoints=tcp -p 0
 
 
 # Proxies for required interfaces
-JointMotor1Proxy = jointmotor:tcp -h localhost -p 0
-JointMotor2Proxy = jointmotor:tcp -h localhost -p 0
+JointMotorProxy = jointmotor:tcp -h localhost -p 0
 
 
 

@@ -117,6 +117,7 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 		statelegs[i] = proxies[i]->getStateLeg();
 		legsp[i]=QVec::vec3(statelegs[i].x,statelegs[i].y,statelegs[i].z);
 	}
+
 	for(auto p:legsp)
 		qDebug()<<p;
 	

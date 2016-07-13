@@ -18,11 +18,11 @@
  */
 
 
-/** \mainpage RoboComp::hexapodController
+/** \mainpage RoboComp::brainhexapod
  *
  * \section intro_sec Introduction
  *
- * The hexapodController component...
+ * The brainhexapod component...
  *
  * \section interface_sec Interface
  *
@@ -34,7 +34,7 @@
  * ...
  *
  * \subsection install2_ssec Compile and install
- * cd hexapodController
+ * cd brainhexapod
  * <br>
  * cmake . && make
  * <br>
@@ -52,7 +52,7 @@
  *
  * \subsection execution_ssec Execution
  *
- * Just: "${PATH_TO_BINARY}/hexapodController --Ice.Config=${PATH_TO_CONFIG_FILE}"
+ * Just: "${PATH_TO_BINARY}/brainhexapod --Ice.Config=${PATH_TO_CONFIG_FILE}"
  *
  * \subsection running_ssec Once running
  *
@@ -94,10 +94,10 @@ using namespace RoboCompLegController;
 
 
 
-class hexapodController : public RoboComp::Application
+class brainhexapod : public RoboComp::Application
 {
 public:
-	hexapodController (QString prfx) { prefix = prfx.toStdString(); }
+	brainhexapod (QString prfx) { prefix = prfx.toStdString(); }
 private:
 	void initialize();
 	std::string prefix;
@@ -107,14 +107,14 @@ public:
 	virtual int run(int, char*[]);
 };
 
-void ::hexapodController::initialize()
+void ::brainhexapod::initialize()
 {
 	// Config file properties read example
 	// configGetString( PROPERTY_NAME_1, property1_holder, PROPERTY_1_DEFAULT_VALUE );
 	// configGetInt( PROPERTY_NAME_2, property1_holder, PROPERTY_2_DEFAULT_VALUE );
 }
 
-int ::hexapodController::run(int argc, char* argv[])
+int ::brainhexapod::run(int argc, char* argv[])
 {
 #ifdef USE_QTGUI
 	QApplication a(argc, argv);  // GUI application
@@ -344,7 +344,7 @@ int main(int argc, char* argv[])
 			printf("Configuration prefix: <%s>\n", prefix.toStdString().c_str());
 		}
 	}
-	::hexapodController app(prefix);
+	::brainhexapod app(prefix);
 
 	return app.main(argc, argv, configFile.c_str());
 }

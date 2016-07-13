@@ -16,44 +16,51 @@
  *    You should have received a copy of the GNU General Public License
  *    along with RoboComp.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "genericworker.h"
+#include "specificworker.h"
+
 /**
 * \brief Default constructor
 */
-GenericWorker::GenericWorker(MapPrx& mprx) :
-QObject()
+SpecificWorker::SpecificWorker(MapPrx& mprx) : GenericWorker(mprx)
 {
 
-	jointmotor_proxy = (*(JointMotorPrx*)mprx["JointMotorProxy"]);
-
-
-	mutex = new QMutex(QMutex::Recursive);
-
-	Period = BASIC_PERIOD;
-connect(&timer, SIGNAL(timeout()), this, SLOT(compute()));
-// 	timer.start(Period);
 }
 
 /**
 * \brief Default destructor
 */
-GenericWorker::~GenericWorker()
+SpecificWorker::~SpecificWorker()
+{
+	
+}
+
+bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 {
 
-}
-void GenericWorker::killYourSelf()
-{
-	rDebug("Killing myself");
-	emit kill();
-}
-/**
-* \brief Change compute period
-* @param per Period in ms
-*/
-void GenericWorker::setPeriod(int p)
-{
-	rDebug("Period changed"+QString::number(p));
-	Period = p;
+
+
 	timer.start(Period);
+	
+
+	return true;
 }
+
+
+void SpecificWorker::compute()
+{
+//	try
+//	{
+//		camera_proxy->getYImage(0,img, cState, bState);
+//		memcpy(image_gray.data, &img[0], m_width*m_height*sizeof(uchar));
+//		searchTags(image_gray);
+//	}
+//		catch(const Ice::Exception &e)
+//	{
+// 		std::cout << "Error reading from Camera" << e << std::endl;
+//	}
+}
+
+
+
+
 

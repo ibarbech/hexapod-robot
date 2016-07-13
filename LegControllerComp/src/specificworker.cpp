@@ -81,7 +81,7 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 	}
 	for(auto name:motores)
 	{
-		motorsparams[name.toStdString()]=jointmotor1_proxy->getMotorParams(name.toStdString());
+		motorsparams[name.toStdString()]=jointmotor_proxy->getMotorParams(name.toStdString());
 	}
 	pos_foot =inner->transform(floor,foot);
 	timer.start(Period);
@@ -93,7 +93,7 @@ void SpecificWorker::compute()
 	try{
 		foreach(QString m, motores)
 		{
-			statemap[m.toStdString()]=jointmotor1_proxy->getMotorState(m.toStdString());//robot
+			statemap[m.toStdString()]=jointmotor_proxy->getMotorState(m.toStdString());//robot
 			inner->updateJointValue(m,statemap[m.toStdString()].pos);
 		}
 	}
@@ -128,7 +128,7 @@ StateLeg SpecificWorker::getStateLeg()
 	{
 		try
 		{
-			ms=jointmotor1_proxy->getMotorState(m.toStdString());
+			ms=jointmotor_proxy->getMotorState(m.toStdString());
 			if(ms.isMoving)
 				s.ismoving=true;
 			aux[i].pos=ms.pos;
@@ -283,7 +283,7 @@ void SpecificWorker::moverangles(QVec angles,double vel)
 				q2=angles(1) *signleg,
 				q3=angles(2) *signleg;
 // 		qDebug()<<"Leg: "<<foot<<" Moviendo"<<"q1 = "<<q1<<"  q2 = "<<q2<<"  q3 = "<<q3;
-		MotorState m=jointmotor1_proxy->getMotorState(motores.at(0).toStdString());
+		MotorState m=jointmotor_proxy->getMotorState(motores.at(0).toStdString());
 		v.name = p.name = motores.at(0).toStdString();
 		v.velocity = vel;
 		p.maxSpeed=fabs(q1-m.pos)*vel;
@@ -291,7 +291,7 @@ void SpecificWorker::moverangles(QVec angles,double vel)
 		mg.push_back(p);
 		mv.push_back(v);
 		
-		m=jointmotor1_proxy->getMotorState(motores.at(1).toStdString());
+		m=jointmotor_proxy->getMotorState(motores.at(1).toStdString());
 		v.name = p.name=motores.at(1).toStdString();
 		v.velocity = vel;
 		p.maxSpeed=fabs(q2-m.pos)*vel;
@@ -299,19 +299,24 @@ void SpecificWorker::moverangles(QVec angles,double vel)
 		mg.push_back(p);
 		mv.push_back(v);
 		
-		m=jointmotor1_proxy->getMotorState(motores.at(2).toStdString());
+		m=jointmotor_proxy->getMotorState(motores.at(2).toStdString());
 		v.name = p.name=motores.at(2).toStdString();
 		v.velocity = vel;
 		p.position=q3;
 		p.maxSpeed=fabs(q3-m.pos)*vel;
 		mg.push_back(p);
 		mv.push_back(v);
-// 		jointmotor1_proxy->setSyncVelocity(mv);
-		jointmotor1_proxy->setSyncPosition(mg);
-// 		jointmotor1_proxy->setSyncPosition(mg);
+// 		jointmotor_proxy->setSyncVelocity(mv);
+		jointmotor_proxy->setSyncPosition(mg);
+// 		jointmotor_proxy->setSyncPosition(mg);
 		
 	}
 	else
 		qDebug()<< "Posicion no alcanzada";
 
+}
+
+void SpecificWorker::move(const float x, const float y)
+{
+	
 }

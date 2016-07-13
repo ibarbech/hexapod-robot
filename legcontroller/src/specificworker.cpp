@@ -82,97 +82,19 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 	qDebug()<<"    m2 = "<<motores.at(1);
 	qDebug()<<"    m2 = "<<motores.at(2);
 	qDebug()<<"-----------------------------";
-	
-	pos_foot =inner->transform(floor,foot);
+	QVec posini = QVec::vec3(0,0.35,-0.8);
+	moverangles(posini,0);
+
+	sleep(1);
 	hexapod.start();
-	timer.start(Period);
+	timer.start(10);
 	return true;
 }
 
-void SpecificWorker::compute()
-{
-	try{
-		foreach(QString m, motores)
-		{
-			statemap[m.toStdString()]=jointmotor_proxy->getMotorState(m.toStdString());//robot
-			inner->updateJointValue(m,statemap[m.toStdString()].pos);
-		}
-	}
-	catch(const Ice::Exception &ex)
-	{
-		  std::cout << ex << std::endl;
-	}	
-	
-	stabilize();
-}
-
-void SpecificWorker::fun_avanzar()
-{
-
-}
-
-void SpecificWorker::fun_error_imu()
-{
-
-}
-
-void SpecificWorker::fun_error_timeout()
-{
-
-}
-
-void SpecificWorker::fun_recibe_ofset()
-{
-	
-}
-
-void SpecificWorker::fun_leer_imu()
-{
-	RoboCompIMU::Orientation o = imu_proxy->getOrientation();
-	if(fabs(o.Pitch)>0.2||fabs(o.Roll)>0.2)
-		emit avanzartoerror_imu();
-	else
-		emit leer_imutoleer_imu();
-}
-
-void SpecificWorker::fun_leer_sensores()
-{
-	if(footpreassuresensor_proxy->readSensor(foot.toStdString())>15)
-		emit avanzartorecibe_ofset();
-	else
-		emit leer_sensorestoleer_sensores();
-}
-
-void SpecificWorker::fun_avanzar_principal()
-{
-
-}
-
-void SpecificWorker::fun_calcular_subobj()
-{
-
-}
-
-void SpecificWorker::fun_moverse()
-{
-
-}
-
-void SpecificWorker::fun_calcular_obj()
-{
-
-}
-
-void SpecificWorker::fun_exit()
-{
-
-}
-
-
 StateLeg SpecificWorker::getStateLeg()
 {
-	StateLeg s;
-	s.ismoving=false;
+	StateLeg state;
+	state.ismoving=false;
 	RoboCompLegController::Statemotor aux[3];
 	QVec aux2=QVec::vec3();
 	int i=0;
@@ -183,7 +105,7 @@ StateLeg SpecificWorker::getStateLeg()
 		{
 			ms=jointmotor_proxy->getMotorState(m.toStdString());
 			if(ms.isMoving)
-				s.ismoving=true;
+				state.ismoving=true;
 			aux[i].pos=ms.pos;
 			aux[i].name=m.toStdString();
 		}
@@ -196,21 +118,22 @@ StateLeg SpecificWorker::getStateLeg()
 		}
 		i++;
 	}
-	s.q1=aux[0];
-	s.q2=aux[1];
-	s.q3=aux[2];
+	state.q1=aux[0];
+	state.q2=aux[1];
+	state.q3=aux[2];
 	aux2=inner->transform(base,foot);
-	s.x=aux2.x();
-	s.y=aux2.y();
-	s.z=aux2.z();
-	s.ref=base.toStdString();
-	s.name=nameLeg.toStdString();
-	return s;
+	state.x=aux2.x();
+	state.y=aux2.y();
+	state.z=aux2.z();
+	state.ref=base.toStdString();
+	state.name=nameLeg.toStdString();
+	state.idel= idel;
+	return state;
 }
 
-bool SpecificWorker::move(const float x, const float y)
+void SpecificWorker::move(const float x, const float y)
 {
-
+	idel=false;
 }
 
 bool SpecificWorker::setListIKLeg(const ListPoseLeg &ps, const bool &simu)
@@ -387,7 +310,6 @@ void SpecificWorker::moverangles(QVec angles,double vel)
 
 }
 
-
 void SpecificWorker::stabilize()
 {
 	QVec pos =inner->transform(base,foot);
@@ -409,4 +331,109 @@ void SpecificWorker::stabilize()
 	setIKBody(p,false);
 }
 
+void SpecificWorker::fun_paso()
+{
+	updateinner();
+	static QVec tmp = QVec::vec3(0,0,0);
+	static float i = 0;
+	qDebug()<<__FUNCTION__<<i;
+	QVec obfin = QVec::vec3(0, 0, 40);		//x,y,z
+	if(i==0 || (pos_foot-tmp).norm2()<5)
+	{
+		QVec ini = pos_foot;
+		QVec fin = pos_center + obfin;
+		tmp=bezier3(ini,QVec::vec3(pos_center.x(),0,pos_center.z()),fin,i);
+		
+		RoboCompLegController::PoseLeg p;
+		p.x=tmp.x();
+		p.y=tmp.y();
+		p.z=tmp.z();
+		p.ref=base.toStdString();
+		p.vel = 1;
+		
+		setIKLeg(p,false);
+		
+		i+=0.01;
+		if(i>1)
+		{
+			i=0;
+			emit pasotoempujar();
+		}
+	}
+	emit pasotopaso();
+}
+
+void SpecificWorker::fun_empujar()
+{
+	updateinner();
+	static QVec tmp = QVec::vec3(0,0,0);
+	static float i = 0;
+	qDebug()<<__FUNCTION__<<i;
+	QVec obfin = QVec::vec3(0, 0, 40);		//x,y,z
+	if(i==0 || (pos_foot-tmp).norm2()<1)
+	{
+		
+		QVec ini = pos_foot;
+		QVec fin = pos_center - obfin;
+		tmp=bezier2(ini,fin,i);
+		
+		RoboCompLegController::PoseLeg p;
+		p.x=tmp.x();
+		p.y=tmp.y();
+		p.z=tmp.z();
+		p.ref=base.toStdString();
+		p.vel = 1;
+		
+		setIKLeg(p,false);
+		
+		i+=0.01;
+		if(i>1)
+		{
+			i=0;
+			idel=true;
+		}
+	}
+	if (!idel)
+		emit empujartoempujar();
+}
+
+QVec SpecificWorker::bezier2(QVec p0, QVec p1, float t)
+{
+	QVec diff = p1 - p0;
+	return p0 + (diff * t);
+}
+
+QVec SpecificWorker::bezier3(QVec p0, QVec p1, QVec p2, float t)
+{
+	QVec a=bezier2(p0,p1,t);
+	QVec b=bezier2(p1,p2,t);
+	return bezier2(a,b,t);
+}
+
+double SpecificWorker::mapear(double x, double in_min, double in_max, double out_min, double out_max)
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+void SpecificWorker::updateinner()
+{
+	static int i = 0;
+	try{
+		foreach(QString m, motores)
+		{
+			statemap[m.toStdString()]=jointmotor_proxy->getMotorState(m.toStdString());//robot
+			inner->updateJointValue(m,statemap[m.toStdString()].pos);
+		}
+	}
+	catch(const Ice::Exception &ex)
+	{
+		  std::cout << ex << std::endl;
+	}	
+	pos_foot = inner->transform(base,foot);
+	if (i==0)
+	{
+		i++;
+		pos_center = pos_foot;
+	}
+}
 

@@ -16,44 +16,39 @@
  *    You should have received a copy of the GNU General Public License
  *    along with RoboComp.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "genericworker.h"
-/**
-* \brief Default constructor
-*/
-GenericWorker::GenericWorker(MapPrx& mprx) :
-QObject()
-{
-
-	jointmotor_proxy = (*(JointMotorPrx*)mprx["JointMotorProxy"]);
-
-
-	mutex = new QMutex(QMutex::Recursive);
-
-	Period = BASIC_PERIOD;
-connect(&timer, SIGNAL(timeout()), this, SLOT(compute()));
-// 	timer.start(Period);
-}
 
 /**
-* \brief Default destructor
+       \brief
+       @author authorname
 */
-GenericWorker::~GenericWorker()
-{
 
-}
-void GenericWorker::killYourSelf()
+
+
+#ifndef SPECIFICWORKER_H
+#define SPECIFICWORKER_H
+
+#include <genericworker.h>
+#include <innermodel/innermodel.h>
+
+class SpecificWorker : public GenericWorker
 {
-	rDebug("Killing myself");
-	emit kill();
-}
-/**
-* \brief Change compute period
-* @param per Period in ms
-*/
-void GenericWorker::setPeriod(int p)
-{
-	rDebug("Period changed"+QString::number(p));
-	Period = p;
-	timer.start(Period);
-}
+Q_OBJECT
+public:
+	SpecificWorker(MapPrx& mprx);	
+	~SpecificWorker();
+	bool setParams(RoboCompCommonBehavior::ParameterList params);
+
+
+public slots:
+
+void compute();
+private:
+	InnerModel *innerModel;
+
+private slots:
+
+	
+};
+
+#endif
 

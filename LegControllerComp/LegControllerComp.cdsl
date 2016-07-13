@@ -5,7 +5,7 @@ Component LegControllerComp
 {
 	Communications
 	{
-		requires JointMotor, JointMotor;
+		requires JointMotor;
 		implements LegController;
 	};
 	language Cpp;

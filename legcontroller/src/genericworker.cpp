@@ -25,39 +25,18 @@ QObject()
 {
 
 //Initialization State machine
-	avanzar->addTransition(this, SIGNAL(avanzartorecibe_ofset()), recibe_ofset);
-	avanzar->addTransition(this, SIGNAL(avanzartoerror_timeout()), error_timeout);
-	avanzar->addTransition(this, SIGNAL(avanzartoerror_imu()), error_imu);
-	recibe_ofset->addTransition(this, SIGNAL(recibe_ofsettoavanzar()), avanzar);
-	error_timeout->addTransition(this, SIGNAL(error_timeouttorecibe_ofset()), recibe_ofset);
-	error_imu->addTransition(this, SIGNAL(error_imutorecibe_ofset()), recibe_ofset);
-	leer_imu->addTransition(this, SIGNAL(leer_imutoleer_imu()), leer_imu);
-	leer_sensores->addTransition(this, SIGNAL(leer_sensorestoleer_sensores()), leer_sensores);
-	calcular_obj->addTransition(this, SIGNAL(calcular_objtomoverse()), moverse);
-	moverse->addTransition(this, SIGNAL(moversetomoverse()), moverse);
-	moverse->addTransition(this, SIGNAL(moversetocalcular_subobj()), calcular_subobj);
-	moverse->addTransition(this, SIGNAL(moversetoexit()), exit);
-	calcular_subobj->addTransition(this, SIGNAL(calcular_subobjtomoverse()), moverse);
+	paso->addTransition(this, SIGNAL(pasotopaso()), paso);
+	paso->addTransition(this, SIGNAL(pasotoempujar()), empujar);
+	empujar->addTransition(this, SIGNAL(empujartoempujar()), empujar);
+	empujar->addTransition(this, SIGNAL(empujartopaso()), paso);
 
-	hexapod.addState(avanzar);
-	hexapod.addState(error_imu);
-	hexapod.addState(error_timeout);
-	hexapod.addState(recibe_ofset);
+	hexapod.addState(empujar);
+	hexapod.addState(paso);
 
-	hexapod.setInitialState(recibe_ofset);
-	avanzar_principal->setInitialState(calcular_obj);
+	hexapod.setInitialState(paso);
 
-	QObject::connect(avanzar, SIGNAL(entered()), this, SLOT(fun_avanzar()));
-	QObject::connect(error_imu, SIGNAL(entered()), this, SLOT(fun_error_imu()));
-	QObject::connect(error_timeout, SIGNAL(entered()), this, SLOT(fun_error_timeout()));
-	QObject::connect(recibe_ofset, SIGNAL(entered()), this, SLOT(fun_recibe_ofset()));
-	QObject::connect(leer_imu, SIGNAL(entered()), this, SLOT(fun_leer_imu()));
-	QObject::connect(leer_sensores, SIGNAL(entered()), this, SLOT(fun_leer_sensores()));
-	QObject::connect(avanzar_principal, SIGNAL(entered()), this, SLOT(fun_avanzar_principal()));
-	QObject::connect(calcular_obj, SIGNAL(entered()), this, SLOT(fun_calcular_obj()));
-	QObject::connect(exit, SIGNAL(entered()), this, SLOT(fun_exit()));
-	QObject::connect(calcular_subobj, SIGNAL(entered()), this, SLOT(fun_calcular_subobj()));
-	QObject::connect(moverse, SIGNAL(entered()), this, SLOT(fun_moverse()));
+	QObject::connect(empujar, SIGNAL(entered()), this, SLOT(fun_empujar()));
+	QObject::connect(paso, SIGNAL(entered()), this, SLOT(fun_paso()));
 
 //------------------
 	footpreassuresensor_proxy = (*(FootPreassureSensorPrx*)mprx["FootPreassureSensorProxy"]);
@@ -68,7 +47,6 @@ QObject()
 	mutex = new QMutex(QMutex::Recursive);
 
 	Period = BASIC_PERIOD;
-	connect(&timer, SIGNAL(timeout()), this, SLOT(compute()));
 // 	timer.start(Period);
 }
 

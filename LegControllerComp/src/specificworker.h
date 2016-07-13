@@ -53,6 +53,7 @@ public:
 	~SpecificWorker();
 	bool setParams(RoboCompCommonBehavior::ParameterList params);
 
+	void move(const float x, const float y);
 	bool setListIKLeg(const ListPoseLeg &ps, const bool &simu);
 	StateLeg getStateLeg();
 	bool setIKLeg(const PoseLeg &p, const bool &simu);

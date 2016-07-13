@@ -68,7 +68,7 @@ public:
 	IMUPrx imu_proxy;
 
 	virtual StateLeg getStateLeg() = 0;
-	virtual bool move(const float x, const float y) = 0;
+	virtual void move(const float x, const float y) = 0;
 	virtual bool setListIKLeg(const ListPoseLeg &ps, const bool &simu) = 0;
 	virtual bool setIKLeg(const PoseLeg &p, const bool &simu) = 0;
 	virtual bool setIKBody(const PoseBody &p, const bool &simu) = 0;
@@ -79,17 +79,8 @@ protected:
 //State Machine
 	QStateMachine hexapod;
 
-	QState *avanzar = new QState(QState::ParallelStates);
-	QState *error_imu = new QState();
-	QState *error_timeout = new QState();
-	QState *recibe_ofset = new QState();
-	QState *leer_imu = new QState(avanzar);
-	QState *leer_sensores = new QState(avanzar);
-	QState *avanzar_principal = new QState(avanzar);
-	QState *calcular_subobj = new QState(avanzar_principal);
-	QState *moverse = new QState(avanzar_principal);
-	QState *calcular_obj = new QState(avanzar_principal);
-	QFinalState *exit = new QFinalState(avanzar_principal);
+	QState *empujar = new QState();
+	QState *paso = new QState();
 
 //-------------------------
 
@@ -97,37 +88,18 @@ protected:
 	int Period;
 
 public slots:
-	virtual void compute() = 0;
 //Slots funtion State Machine
-	virtual void fun_avanzar() = 0;
-	virtual void fun_error_imu() = 0;
-	virtual void fun_error_timeout() = 0;
-	virtual void fun_recibe_ofset() = 0;
-	virtual void fun_leer_imu() = 0;
-	virtual void fun_leer_sensores() = 0;
-	virtual void fun_avanzar_principal() = 0;
-	virtual void fun_calcular_subobj() = 0;
-	virtual void fun_moverse() = 0;
-	virtual void fun_calcular_obj() = 0;
-	virtual void fun_exit() = 0;
+	virtual void fun_empujar() = 0;
+	virtual void fun_paso() = 0;
 
 //-------------------------
 signals:
 	void kill();
 //Signals for State Machine
-	void avanzartorecibe_ofset();
-	void avanzartoerror_timeout();
-	void avanzartoerror_imu();
-	void recibe_ofsettoavanzar();
-	void error_timeouttorecibe_ofset();
-	void error_imutorecibe_ofset();
-	void leer_imutoleer_imu();
-	void leer_sensorestoleer_sensores();
-	void calcular_objtomoverse();
-	void moversetomoverse();
-	void moversetocalcular_subobj();
-	void moversetoexit();
-	void calcular_subobjtomoverse();
+	void pasotopaso();
+	void pasotoempujar();
+	void empujartoempujar();
+	void empujartopaso();
 
 //-------------------------
 };
