@@ -34,9 +34,9 @@ StateLeg LegControllerI::getStateLeg(const Ice::Current&)
 	return worker->getStateLeg();
 }
 
-void LegControllerI::move(const float  x, const float  y, const Ice::Current&)
+void LegControllerI::move(const float  x, const float  y, const string  &state, const Ice::Current&)
 {
-	worker->move(x, y);
+	worker->move(x, y, state);
 }
 
 bool LegControllerI::setListIKLeg(const ListPoseLeg  &ps,  bool  simu, const Ice::Current&)

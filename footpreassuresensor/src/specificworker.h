@@ -33,6 +33,7 @@
 
 #include <genericworker.h>
 #include <innermodel/innermodel.h>
+#include <q4serialport/q4serialport.h>
 
 class SpecificWorker : public GenericWorker
 {
@@ -41,45 +42,17 @@ public:
 	SpecificWorker(MapPrx& mprx);	
 	~SpecificWorker();
 	bool setParams(RoboCompCommonBehavior::ParameterList params);
-
-	StateLeg getStateLeg();
-	void move(const float x, const float y, const string &state);
-	bool setListIKLeg(const ListPoseLeg &ps, const bool &simu);
-	bool setIKLeg(const PoseLeg &p, const bool &simu);
-	bool setIKBody(const PoseBody &p, const bool &simu);
-	bool setFKLeg(const AnglesLeg &al, const bool &simu);
+	string leg1, leg2, leg3, leg4, leg5, leg6;
+	
+	Buffer readSensors();
+	int readSensor(const string &name);
 
 public slots:
-	void stabilize();
+	void compute(); 	
+
 private:
-	InnerModel *inner;
-	string innerpath;
-	QStringList motores;
-	QString foot,floor,base,nameLeg;
-	double  coxa, femur, tibia, rPitch, rRoll;
-	int signleg;
-	QVec pos_foot, pos_center;
-	bool idel;
-	RoboCompJointMotor::MotorStateMap statemap;
-	QMap<string,RoboCompJointMotor::MotorParams> motorsparams;
-	double 	q1, q2, q3;
-	
-	void moverangles(QVec angles,double vel);
-	QVec movFoottoPoint(QVec p, bool &exito);
-	
-	
-	QVec bezier3(QVec p0, QVec p1, QVec p2, float t);
-	QVec bezier2(QVec p0, QVec p2, float t);
-	double mapear(double x, double in_min, double in_max, double out_min, double out_max);
-	void updateinner();
-
-private slots:
-//Specification slot funtions State Machine
-	void fun_paso();
-	void fun_empujar();
-
-//--------------------
-	
+	QSerialPort serial;
+	RoboCompFootPreassureSensor::Buffer buffer;
 };
 
 #endif

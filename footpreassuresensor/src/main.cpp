@@ -18,11 +18,11 @@
  */
 
 
-/** \mainpage RoboComp::LegControllerComp
+/** \mainpage RoboComp::FootPreassureSensor
  *
  * \section intro_sec Introduction
  *
- * The LegControllerComp component...
+ * The FootPreassureSensor component...
  *
  * \section interface_sec Interface
  *
@@ -34,7 +34,7 @@
  * ...
  *
  * \subsection install2_ssec Compile and install
- * cd LegControllerComp
+ * cd FootPreassureSensor
  * <br>
  * cmake . && make
  * <br>
@@ -52,15 +52,13 @@
  *
  * \subsection execution_ssec Execution
  *
- * Just: "${PATH_TO_BINARY}/LegControllerComp --Ice.Config=${PATH_TO_CONFIG_FILE}"
+ * Just: "${PATH_TO_BINARY}/FootPreassureSensor --Ice.Config=${PATH_TO_CONFIG_FILE}"
  *
  * \subsection running_ssec Once running
  *
  * ...
  *
  */
-#include <signal.h>
-
 // QT includes
 #include <QtCore>
 #include <QtGui>
@@ -80,12 +78,9 @@
 #include "specificmonitor.h"
 #include "commonbehaviorI.h"
 
-#include <legcontrollerI.h>
+#include <footpreassuresensorI.h>
 
-#include <JointMotor.h>
-#include <LegController.h>
 #include <FootPreassureSensor.h>
-#include <IMU.h>
 
 
 // User includes here
@@ -94,17 +89,14 @@
 using namespace std;
 using namespace RoboCompCommonBehavior;
 
-using namespace RoboCompJointMotor;
-using namespace RoboCompLegController;
 using namespace RoboCompFootPreassureSensor;
-using namespace RoboCompIMU;
 
 
 
-class LegControllerComp : public RoboComp::Application
+class FootPreassureSensor : public RoboComp::Application
 {
 public:
-	LegControllerComp (QString prfx) { prefix = prfx.toStdString(); }
+	FootPreassureSensor (QString prfx) { prefix = prfx.toStdString(); }
 private:
 	void initialize();
 	std::string prefix;
@@ -114,86 +106,21 @@ public:
 	virtual int run(int, char*[]);
 };
 
-void ::LegControllerComp::initialize()
+void ::FootPreassureSensor::initialize()
 {
 	// Config file properties read example
 	// configGetString( PROPERTY_NAME_1, property1_holder, PROPERTY_1_DEFAULT_VALUE );
 	// configGetInt( PROPERTY_NAME_2, property1_holder, PROPERTY_2_DEFAULT_VALUE );
 }
 
-int ::LegControllerComp::run(int argc, char* argv[])
+int ::FootPreassureSensor::run(int argc, char* argv[])
 {
 	QCoreApplication a(argc, argv);  // NON-GUI application
-
-
-	sigset_t sigs;
-	sigemptyset(&sigs);
-	sigaddset(&sigs, SIGHUP);
-	sigaddset(&sigs, SIGINT);
-	sigaddset(&sigs, SIGTERM);
-	sigprocmask(SIG_UNBLOCK, &sigs, 0);
-
-
-
 	int status=EXIT_SUCCESS;
 
-	JointMotorPrx jointmotor_proxy;
-	FootPreassureSensorPrx footpreassuresensor_proxy;
-	IMUPrx imu_proxy;
 
 	string proxy, tmp;
 	initialize();
-
-
-	try
-	{
-		if (not GenericMonitor::configGetString(communicator(), prefix, "JointMotorProxy", proxy, ""))
-		{
-			cout << "[" << PROGRAM_NAME << "]: Can't read configuration for proxy JointMotorProxy\n";
-		}
-		jointmotor_proxy = JointMotorPrx::uncheckedCast( communicator()->stringToProxy( proxy ) );
-	}
-	catch(const Ice::Exception& ex)
-	{
-		cout << "[" << PROGRAM_NAME << "]: Exception: " << ex;
-		return EXIT_FAILURE;
-	}
-	rInfo("JointMotorProxy initialized Ok!");
-	mprx["JointMotorProxy"] = (::IceProxy::Ice::Object*)(&jointmotor_proxy);//Remote server proxy creation example
-
-
-	try
-	{
-		if (not GenericMonitor::configGetString(communicator(), prefix, "FootPreassureSensorProxy", proxy, ""))
-		{
-			cout << "[" << PROGRAM_NAME << "]: Can't read configuration for proxy FootPreassureSensorProxy\n";
-		}
-		footpreassuresensor_proxy = FootPreassureSensorPrx::uncheckedCast( communicator()->stringToProxy( proxy ) );
-	}
-	catch(const Ice::Exception& ex)
-	{
-		cout << "[" << PROGRAM_NAME << "]: Exception: " << ex;
-		return EXIT_FAILURE;
-	}
-	rInfo("FootPreassureSensorProxy initialized Ok!");
-	mprx["FootPreassureSensorProxy"] = (::IceProxy::Ice::Object*)(&footpreassuresensor_proxy);//Remote server proxy creation example
-
-
-	try
-	{
-		if (not GenericMonitor::configGetString(communicator(), prefix, "IMUProxy", proxy, ""))
-		{
-			cout << "[" << PROGRAM_NAME << "]: Can't read configuration for proxy IMUProxy\n";
-		}
-		imu_proxy = IMUPrx::uncheckedCast( communicator()->stringToProxy( proxy ) );
-	}
-	catch(const Ice::Exception& ex)
-	{
-		cout << "[" << PROGRAM_NAME << "]: Exception: " << ex;
-		return EXIT_FAILURE;
-	}
-	rInfo("IMUProxy initialized Ok!");
-	mprx["IMUProxy"] = (::IceProxy::Ice::Object*)(&imu_proxy);//Remote server proxy creation example
 
 
 
@@ -228,15 +155,15 @@ int ::LegControllerComp::run(int argc, char* argv[])
 
 
 		// Server adapter creation and publication
-		if (not GenericMonitor::configGetString(communicator(), prefix, "LegController.Endpoints", tmp, ""))
+		if (not GenericMonitor::configGetString(communicator(), prefix, "FootPreassureSensor.Endpoints", tmp, ""))
 		{
-			cout << "[" << PROGRAM_NAME << "]: Can't read configuration for proxy LegController";
+			cout << "[" << PROGRAM_NAME << "]: Can't read configuration for proxy FootPreassureSensor";
 		}
-		Ice::ObjectAdapterPtr adapterLegController = communicator()->createObjectAdapterWithEndpoints("LegController", tmp);
-		LegControllerI *legcontroller = new LegControllerI(worker);
-		adapterLegController->add(legcontroller, communicator()->stringToIdentity("legcontroller"));
-		adapterLegController->activate();
-		cout << "[" << PROGRAM_NAME << "]: LegController adapter created in port " << tmp << endl;
+		Ice::ObjectAdapterPtr adapterFootPreassureSensor = communicator()->createObjectAdapterWithEndpoints("FootPreassureSensor", tmp);
+		FootPreassureSensorI *footpreassuresensor = new FootPreassureSensorI(worker);
+		adapterFootPreassureSensor->add(footpreassuresensor, communicator()->stringToIdentity("footpreassuresensor"));
+		adapterFootPreassureSensor->activate();
+		cout << "[" << PROGRAM_NAME << "]: FootPreassureSensor adapter created in port " << tmp << endl;
 
 
 
@@ -305,7 +232,7 @@ int main(int argc, char* argv[])
 			printf("Configuration prefix: <%s>\n", prefix.toStdString().c_str());
 		}
 	}
-	::LegControllerComp app(prefix);
+	::FootPreassureSensor app(prefix);
 
 	return app.main(argc, argv, configFile.c_str());
 }

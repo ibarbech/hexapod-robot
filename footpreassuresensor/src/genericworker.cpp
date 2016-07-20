@@ -24,28 +24,11 @@ GenericWorker::GenericWorker(MapPrx& mprx) :
 QObject()
 {
 
-//Initialization State machine
-	paso->addTransition(this, SIGNAL(pasotopaso()), paso);
-	paso->addTransition(this, SIGNAL(pasotoempujar()), empujar);
-	empujar->addTransition(this, SIGNAL(empujartoempujar()), empujar);
-	empujar->addTransition(this, SIGNAL(empujartopaso()), paso);
-
-	hexapod.addState(empujar);
-	hexapod.addState(paso);
-
-	hexapod.setInitialState(paso);
-
-	QObject::connect(empujar, SIGNAL(entered()), this, SLOT(fun_empujar()));
-	QObject::connect(paso, SIGNAL(entered()), this, SLOT(fun_paso()));
-
-//------------------
-	footpreassuresensor_proxy = (*(FootPreassureSensorPrx*)mprx["FootPreassureSensorProxy"]);
-	imu_proxy = (*(IMUPrx*)mprx["IMUProxy"]);
-	jointmotor_proxy = (*(JointMotorPrx*)mprx["JointMotorProxy"]);
 
 	mutex = new QMutex(QMutex::Recursive);
 
 	Period = BASIC_PERIOD;
+	connect(&timer, SIGNAL(timeout()), this, SLOT(compute()));
 // 	timer.start(Period);
 }
 

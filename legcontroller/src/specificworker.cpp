@@ -82,11 +82,26 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 	qDebug()<<"    m2 = "<<motores.at(1);
 	qDebug()<<"    m2 = "<<motores.at(2);
 	qDebug()<<"-----------------------------";
-	QVec posini = QVec::vec3(0,0.35,-0.8);
-	moverangles(posini,0);
-
+	QVec posini = QVec::vec3(0,0.3,-0.9);
+	moverangles(posini, 0);
 	sleep(1);
-	hexapod.start();
+	updateinner();
+// 	pos_foot = inner->transform(motores.at(0),foot);
+// 	qDebug()<<pos_foot.x()<<", "<<pos_foot.y()<<", "<<pos_foot.z();
+// 	RoboCompLegController::PoseLeg p;
+// 	p.x =  pos_foot.x();
+// 	p.y =  pos_foot.y();
+// 	p.x =  pos_foot.x();
+// 	p.ref = base.toStdString();
+// 	p.vel = 50;
+// 	setIKLeg(p, false);
+// 	sleep(1);
+// 	updateinner();
+// 	qDebug()<<pos_foot;
+	sleep(10);
+	connect(&timer, SIGNAL(timeout()), this, SLOT(stabilize()));
+// 	sleep(1);
+// 	hexapod.start();
 	timer.start(10);
 	return true;
 }
@@ -131,7 +146,7 @@ StateLeg SpecificWorker::getStateLeg()
 	return state;
 }
 
-void SpecificWorker::move(const float x, const float y)
+void SpecificWorker::move(const float x, const float y, const string &state)
 {
 	idel=false;
 }
@@ -158,14 +173,14 @@ bool SpecificWorker::setIKLeg(const PoseLeg &p, const bool &simu)
 		QVec angles=movFoottoPoint(posfoot, exito);
 		if(exito&&!simu)
 		{
-			moverangles(angles, /*p.vel*/0);
+			moverangles(angles, p.vel);
 		}
 		if(!exito)
 		{
 			RoboCompLegController::ImpossiblePositionException e;
 			e.what="Impossible Position";
 			qDebug()<<"Error";
-			//send e
+			//send ebase
 		}
 		return exito;
 	}
@@ -221,9 +236,35 @@ bool SpecificWorker::setFKLeg(const AnglesLeg &al, const bool &simu)
 
 QVec SpecificWorker::movFoottoPoint(QVec p, bool &exito)
 {
+// 	QVec angles=QVec::zeros(3);
+// 	double  x = p.x(),
+// 			y = p.y(),
+// 			z = p.z(),
+// 			L1 = sqrt(pow(x,2)+pow(z,2)),
+// 			L= sqrt(pow(y,2)+pow((L1-coxa),2));
+// 	if(L<tibia+femur /*&&( x>0 || z>0)*/)
+// 	{
+// 		q1 = atan2(x/z);
+// 		
+// 		q2 = (acos(abs(y)/L)) + (acos((pow(tibia,2)-pow(femur,2)-pow(L,2))/(-2*femur*L)));
+// 		q3 = acos(((pow(L,2))-pow(tibia,2)-pow(femur,2))/(-2*tibia*femur));
+// 		q2 -= M_PI/2;
+// 		q3 -= M_PI;
+// 		exito=true;
+// 	}
+// 	else
+// 	{
+// 		qDebug()<<"Imposible llegar: punto demasiado lejano.";
+// 		exito=false;
+// 	}
+// 	qDebug()<<q1<<", "<<q2<<", "<<q3;
+// 	angles(0)=q1/*+statemap[motores.at(0).toStdString()].pos*//*+motorsparams[motores.at(0).toStdString()].offset*/;
+// 	angles(1)=-q2/*+motorsparams[motores.at(1).toStdString()].offset*/;
+// 	angles(2)=-q3/*+motorsparams[motores.at(2).toStdString()].offset*/;
+	
 	QVec angles=QVec::zeros(3);
 
-	double q1, q2, q3,x=p.x(), y=p.y(), z=p.z(),
+	double x=p.x(), y=p.y(), z=p.z(),
 		r=abs(sqrt(pow(x,2)+pow(z,2))-coxa),
 		cosq3=(pow(r,2)+pow(y,2)-pow(tibia,2)-pow(femur,2))/(2*tibia*femur);
 	if(cosq3>1)
@@ -241,8 +282,8 @@ QVec SpecificWorker::movFoottoPoint(QVec p, bool &exito)
 		q1=atan2(x,z);
 		q3=atan2(senq3,cosq3);
 		q2=atan2(y,r)-atan2((tibia*senq3),(femur+(tibia*cosq3)));
-		q2 += 0.22113;
-		q3 += 0.578305;
+		q2 += 0.22113242142;
+		q3 += 0.578300988108;
 		double max=M_PI/2+0.15, min=- M_PI/2-0.15;
 		if((min<q1&&q1<max)&&(min<q2&&q2<max)&&(min<q3&&q3<max)){
 			exito=true;
@@ -273,9 +314,9 @@ void SpecificWorker::moverangles(QVec angles,double vel)
 		RoboCompJointMotor::MotorGoalPosition p;
 		RoboCompJointMotor::MotorGoalVelocityList mv;
 		RoboCompJointMotor::MotorGoalVelocity v;
-		double 	q1=angles(0)/* *-1*/,
-				q2=angles(1) *signleg,
-				q3=angles(2) *signleg;
+	 	q1=angles(0);
+		q2=angles(1) *signleg;
+		q3=angles(2) *signleg;
 // 		qDebug()<<"Leg: "<<foot<<" Moviendo"<<"q1 = "<<q1<<"  q2 = "<<q2<<"  q3 = "<<q3;
 		MotorState m=jointmotor_proxy->getMotorState(motores.at(0).toStdString());
 		v.name = p.name = motores.at(0).toStdString();
@@ -300,9 +341,9 @@ void SpecificWorker::moverangles(QVec angles,double vel)
 		p.maxSpeed=fabs(q3-m.pos)*vel;
 		mg.push_back(p);
 		mv.push_back(v);
-// 		jointmotor_proxy->setSyncVelocity(mv);
+		jointmotor_proxy->setSyncVelocity(mv);
 		jointmotor_proxy->setSyncPosition(mg);
-// 		jointmotor_proxy->setSyncPosition(mg);
+
 		
 	}
 	else
@@ -312,23 +353,32 @@ void SpecificWorker::moverangles(QVec angles,double vel)
 
 void SpecificWorker::stabilize()
 {
+	updateinner();
 	QVec pos =inner->transform(base,foot);
 	RoboCompIMU::DataImu d = imu_proxy->getDataImu();
-	RoboCompLegController::PoseBody p;
-	InnerModelTransform* t = inner->getTransform(base);
-	p.ref = base.toStdString();
-	p.x = 0;
-	p.y = 0;
-	p.z = 0;
-	p.rx = d.rot.Pitch + t->getRxValue();
-	p.ry = 0;
-	p.rz = d.rot.Roll + t->getRzValue();
-	p.vel = 0;
-	p.px = pos.x();
-	p.pz = pos.z();
-	p.py = pos.y();
-	
-	setIKBody(p,false);
+	RoboCompJointMotor::MotorStateMap ms;
+	jointmotor_proxy->getAllMotorState(ms);
+	for(RoboCompJointMotor::MotorStateMap::iterator it = ms.begin(); it != ms.end(); it++)
+		if(it->second.isMoving)
+			return;
+	if(fabs(d.rot.Pitch)>0.04||fabs(d.rot.Roll)>0.04)
+	{
+		RoboCompLegController::PoseBody p;
+		InnerModelTransform* t = inner->getTransform(base);
+		p.ref = base.toStdString();
+		p.x = 0;
+		p.y = 0;
+		p.z = 0;
+		p.rx = d.rot.Pitch + t->getRxValue();
+		p.ry = 0;
+		p.rz = d.rot.Roll + t->getRzValue();
+		p.vel = 150;
+		p.px = pos.x();
+		p.pz = pos.z();
+		p.py = pos.y();
+		
+		setIKBody(p,false);
+	}
 }
 
 void SpecificWorker::fun_paso()
@@ -336,20 +386,21 @@ void SpecificWorker::fun_paso()
 	updateinner();
 	static QVec tmp = QVec::vec3(0,0,0);
 	static float i = 0;
-	qDebug()<<__FUNCTION__<<i;
-	QVec obfin = QVec::vec3(0, 0, 40);		//x,y,z
-	if(i==0 || (pos_foot-tmp).norm2()<5)
+	static QVec ini, fin;
+	qDebug()<<__FUNCTION__<<i<<(pos_foot-tmp).norm2();
+	QVec obfin = QVec::vec3(0, 0, 47);		//x,y,z
+	if(i==0)
+		ini = pos_foot;
+		fin = pos_center + obfin;
+	if(i==0 || (pos_foot-tmp).norm2()<10)
 	{
-		QVec ini = pos_foot;
-		QVec fin = pos_center + obfin;
 		tmp=bezier3(ini,QVec::vec3(pos_center.x(),0,pos_center.z()),fin,i);
-		
 		RoboCompLegController::PoseLeg p;
 		p.x=tmp.x();
 		p.y=tmp.y();
 		p.z=tmp.z();
 		p.ref=base.toStdString();
-		p.vel = 1;
+		p.vel = 0;
 		
 		setIKLeg(p,false);
 		
@@ -368,22 +419,21 @@ void SpecificWorker::fun_empujar()
 	updateinner();
 	static QVec tmp = QVec::vec3(0,0,0);
 	static float i = 0;
-	qDebug()<<__FUNCTION__<<i;
-	QVec obfin = QVec::vec3(0, 0, 40);		//x,y,z
-	if(i==0 || (pos_foot-tmp).norm2()<1)
+	qDebug()<<__FUNCTION__<<i<<(pos_foot-tmp).norm2();
+	QVec obfin = QVec::vec3(0, 0, 47);		//x,y,z
+	static QVec ini, fin;
+	if(i==0)
+		ini = pos_foot;
+		fin = pos_center - obfin;
+	if(i==0 || (pos_foot-tmp).norm2()<10)
 	{
-		
-		QVec ini = pos_foot;
-		QVec fin = pos_center - obfin;
 		tmp=bezier2(ini,fin,i);
-		
 		RoboCompLegController::PoseLeg p;
 		p.x=tmp.x();
 		p.y=tmp.y();
 		p.z=tmp.z();
 		p.ref=base.toStdString();
-		p.vel = 1;
-		
+		p.vel = 0;	
 		setIKLeg(p,false);
 		
 		i+=0.01;
@@ -391,10 +441,10 @@ void SpecificWorker::fun_empujar()
 		{
 			i=0;
 			idel=true;
+			emit empujartopaso();
 		}
 	}
-	if (!idel)
-		emit empujartoempujar();
+	emit empujartoempujar();
 }
 
 QVec SpecificWorker::bezier2(QVec p0, QVec p1, float t)

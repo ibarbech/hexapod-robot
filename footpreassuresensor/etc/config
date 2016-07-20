@@ -1,0 +1,15 @@
+CommonBehavior.Endpoints=tcp -p 12001
+
+
+# Endpoints for implemented interfaces
+FootPreassureSensor.Endpoints=tcp -p 12000
+
+
+
+Ice.Warn.Connections=0
+Ice.Trace.Network=0
+Ice.Trace.Protocol=0
+Ice.ACM.Client=10
+Ice.ACM.Server=10
+
+

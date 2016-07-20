@@ -77,7 +77,6 @@ bool SpecificMonitor::sendParamsToWorker(RoboCompCommonBehavior::ParameterList p
 		rError("Incorrect parameters");
 	}
 	return false;
-
 }
 
 ///Local Component parameters read at start
@@ -89,21 +88,10 @@ void SpecificMonitor::readConfig(RoboCompCommonBehavior::ParameterList &params )
 	aux.editable = true;
 	string name = PROGRAM_NAME;
 	cout<<name<<endl;
-	configGetString("",name+".floor", aux.value, "floor");
-	params[name+".floor"] = aux;
-	configGetString("",name+".base", aux.value, "base");
-	params[name+".base"] = aux;
-	configGetString("",name+".InnerModel", aux.value, "default");
-	params[name+".InnerModel"] = aux;
-	if(aux.value=="default")
-		qDebug()<<"Error de configuracion: InnerModelPath";
-	
-	for(int i=1;i<=6;i++)
+	for(int i = 1 ; i<=6; i++)
 	{
-		configGetString("",name+".nameleg"+to_string(i), aux.value, "default");
-		params[name+".nameleg"+to_string(i)] = aux;
-		if(aux.value=="default")
-			qDebug()<<"Error de configuracion: Legs"<<i;
+		configGetString("",name+".leg"+to_string(i), aux.value, "leg"+to_string(i));
+		params[name+".leg"+to_string(i)] = aux;
 	}
 }
 

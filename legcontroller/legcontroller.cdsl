@@ -11,7 +11,7 @@ Component LegControllerComp
 		implements LegController;
 	};
 	language Cpp;
-	statemachine statemachine.smdsl;
+	statemachine "statemachine.smdsl";
 	//gui Qt(QWidget);
 };
 

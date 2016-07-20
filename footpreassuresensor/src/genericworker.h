@@ -24,14 +24,11 @@
 #include <stdint.h>
 #include <qlog/qlog.h>
 
-#include <qt4/QtCore/qstatemachine.h>
-#include <qt4/QtCore/qstate.h>
-#include <CommonBehavior.h>
 
-#include <JointMotor.h>
-#include <LegController.h>
+#include <CommonBehavior.h>
 #include <FootPreassureSensor.h>
-#include <IMU.h>
+
+
 
 #define CHECK_PERIOD 5000
 #define BASIC_PERIOD 100
@@ -40,9 +37,6 @@ typedef map <string,::IceProxy::Ice::Object*> MapPrx;
 
 using namespace std;
 
-using namespace RoboCompLegController;
-using namespace RoboCompIMU;
-using namespace RoboCompJointMotor;
 using namespace RoboCompFootPreassureSensor;
 
 
@@ -62,47 +56,19 @@ public:
 	QMutex *mutex;
 	
 
-	IMUPrx imu_proxy;
-	FootPreassureSensorPrx footpreassuresensor_proxy;
-	JointMotorPrx jointmotor_proxy;
 
-	virtual StateLeg getStateLeg() = 0;
-	virtual void move(const float x, const float y, const string &state) = 0;
-	virtual bool setListIKLeg(const ListPoseLeg &ps, const bool &simu) = 0;
-	virtual bool setIKLeg(const PoseLeg &p, const bool &simu) = 0;
-	virtual bool setIKBody(const PoseBody &p, const bool &simu) = 0;
-	virtual bool setFKLeg(const AnglesLeg &al, const bool &simu) = 0;
+	virtual Buffer readSensors() = 0;
+	virtual int readSensor(const string &name) = 0;
+
 
 protected:
-//State Machine
-	QStateMachine hexapod;
-
-	QState *empujar = new QState();
-	QState *paso = new QState();
-
-//-------------------------
-
 	QTimer timer;
 	int Period;
 
-private:
-
-
 public slots:
-//Slots funtion State Machine
-	virtual void fun_empujar() = 0;
-	virtual void fun_paso() = 0;
-
-//-------------------------
+	virtual void compute() = 0;
 signals:
 	void kill();
-//Signals for State Machine
-	void pasotopaso();
-	void pasotoempujar();
-	void empujartoempujar();
-	void empujartopaso();
-
-//-------------------------
 };
 
 #endif

@@ -29,6 +29,9 @@
 
 #include <genericworker.h>
 #include <innermodel/innermodel.h>
+#include <osgviewer/osgview.h>
+#include <innermodel/innermodelviewer.h>
+#include <qt4/QtCore/QTimer>
 
 class SpecificWorker : public GenericWorker
 {
@@ -44,9 +47,18 @@ public slots:
 void compute();
 private:
 	InnerModel *innerModel;
-
+	RoboCompLegController::StateLeg statelegs[6];
+	LegControllerPrx proxies[6];
+	OsgView *osgView;
+	InnerModelViewer *innerViewer;
+	QTimer clkupdate;
+	QString base;
+	QStringList legs;
+	QVec legsp[6];	
+	string pasostate[6];
+	bool allidel();
 private slots:
-
+	void updatevalues();
 	
 };
 

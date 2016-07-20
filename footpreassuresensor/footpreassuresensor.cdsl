@@ -1,0 +1,11 @@
+import "/robocomp/interfaces/IDSLs/FootPreassureSensor.idsl";
+
+Component FootPreassureSensor
+{
+	Communications
+	{
+		implements FootPreassureSensor;
+	};
+	language Cpp;
+};
+

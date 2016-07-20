@@ -16,34 +16,30 @@
  *    You should have received a copy of the GNU General Public License
  *    along with RoboComp.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef LEGCONTROLLER_H
-#define LEGCONTROLLER_H
+#ifndef FOOTPREASSURESENSOR_H
+#define FOOTPREASSURESENSOR_H
 
 // QT includes
 #include <QtCore/QObject>
 
 // Ice includes
 #include <Ice/Ice.h>
-#include <LegController.h>
+#include <FootPreassureSensor.h>
 
 #include <config.h>
 #include "genericworker.h"
 
-using namespace RoboCompLegController;
+using namespace RoboCompFootPreassureSensor;
 
-class LegControllerI : public QObject , public virtual RoboCompLegController::LegController
+class FootPreassureSensorI : public QObject , public virtual RoboCompFootPreassureSensor::FootPreassureSensor
 {
 Q_OBJECT
 public:
-	LegControllerI( GenericWorker *_worker, QObject *parent = 0 );
-	~LegControllerI();
+	FootPreassureSensorI( GenericWorker *_worker, QObject *parent = 0 );
+	~FootPreassureSensorI();
 	
-	StateLeg getStateLeg(const Ice::Current&);
-	void move(const float  x, const float  y, const string  &state, const Ice::Current&);
-	bool setListIKLeg(const ListPoseLeg  &ps,  bool  simu, const Ice::Current&);
-	bool setIKLeg(const PoseLeg  &p,  bool  simu, const Ice::Current&);
-	bool setIKBody(const PoseBody  &p,  bool  simu, const Ice::Current&);
-	bool setFKLeg(const AnglesLeg  &al,  bool  simu, const Ice::Current&);
+	Buffer readSensors(const Ice::Current&);
+	int readSensor(const string  &name, const Ice::Current&);
 
 	QMutex *mutex;
 private:
