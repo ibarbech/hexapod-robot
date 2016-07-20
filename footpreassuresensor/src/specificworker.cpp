@@ -42,6 +42,13 @@ SpecificWorker::~SpecificWorker()
 
 bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 {
+	string name = PROGRAM_NAME;
+	leg1 = params[name + ".leg1"].value;
+	leg2 = params[name + ".leg2"].value;
+	leg3 = params[name + ".leg3"].value;
+	leg4 = params[name + ".leg4"].value;
+	leg5 = params[name + ".leg5"].value;
+	leg6 = params[name + ".leg6"].value;
 	timer.start(100);
 	return true;
 }
@@ -51,7 +58,6 @@ void SpecificWorker::compute()
 	timer.start(100);
 	char buff[96];// = "p1 1 p2 2 p3 3 p4 4 p5 5 p6 6";
 	int nb = serial.readLine(buff, 96);
-	qDebug() << buff;
 
 	if(nb > 35)
 	{
@@ -76,14 +82,12 @@ void SpecificWorker::compute()
 			if(value == "p6")
 				name = leg6;
 			this->buffer[name] = ls[i+1].toInt();
+			cout << name <<" "<< ls[i+1].toInt() + '\n';
 		}
-		cout << buff;
 	 }
 	 else
 		qDebug() << __FUNCTION__ << "Error reading serial port. Only " << nb << "bytes read";
 	
-	 for (auto& x: this->buffer) 
-		std::cout << x.first << ": " << x.second << '\n';
 }
 
 
