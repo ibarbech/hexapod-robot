@@ -50,13 +50,6 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 	leg5 = params[name + ".leg5"].value;
 	leg6 = params[name + ".leg6"].value;
 	
-	cout<<leg1;
-	cout<<leg2;
-	cout<<leg3;
-	cout<<leg4;
-	cout<<leg5;
-	cout<<leg6;
-	
 	timer.start(100);
 	return true;
 }
@@ -90,7 +83,7 @@ void SpecificWorker::compute()
 			if(value == "p6")
 				name = leg6;
 			this->buffer[name] = ls[i+1].toInt();
-			cout << name <<" "<< ls[i+1].toInt() + '\n';
+			qDebug() << QString::fromStdString(name) <<" "<< ls[i+1].toInt() + '\n';
 		}
 	 }
 	 else
