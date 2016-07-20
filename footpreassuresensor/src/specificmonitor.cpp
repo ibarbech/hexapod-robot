@@ -87,11 +87,10 @@ void SpecificMonitor::readConfig(RoboCompCommonBehavior::ParameterList &params )
 	RoboCompCommonBehavior::Parameter aux;
 	aux.editable = true;
 	string name = PROGRAM_NAME;
-	cout<<name<<endl;
 	for(int i = 1 ; i<=6; i++)
 	{
 		configGetString("",name+".leg"+to_string(i), aux.value, "leg"+to_string(i));
-		params[name+".leg"+to_string(i)] = aux;
+		params[name+".leg"+to_string(i)] = aux;		
 	}
 }
 

@@ -13,3 +13,9 @@ Ice.ACM.Client=10
 Ice.ACM.Server=10
 
 
+FootPreassureSensor.leg1 = arm1
+FootPreassureSensor.leg2 = arm2
+FootPreassureSensor.leg3 = arm3
+FootPreassureSensor.leg4 = arm4
+FootPreassureSensor.leg5 = arm5
+FootPreassureSensor.leg6 = arm6
