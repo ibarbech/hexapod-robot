@@ -62,7 +62,7 @@ void SpecificWorker::compute()
 	
 	qDebug()<<buff;
 
-	if(nb > 35)
+	if(nb > 31)
 	{
 		QString b(buff);	
 		QStringList ls = b.split(" ");
