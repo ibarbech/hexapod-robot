@@ -107,7 +107,7 @@ class SpecificWorker(GenericWorker):
 
 	@QtCore.Slot()
 	def compute(self):
-		self.ComprobarLista()
+		#self.ComprobarLista()
 		self.ComprobarLista2()
 		self.readState()
 				

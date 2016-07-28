@@ -1,0 +1,28 @@
+CommonBehavior.Endpoints=tcp -p 11006
+
+
+# Endpoints for implemented interfaces
+LegController.Endpoints=tcp -p 18006
+
+
+# Proxies for required interfaces
+IMUProxy = imu:tcp -h odroid.local -p 10066
+#JointMotorProxy = jointmotor:tcp -h odroid.local -p 20000
+JointMotorProxy = jointmotor:tcp -h localhost -p 20000
+FootPreassureSensorProxy = footpreassuresensor:tcp -h odroid.local -p 12000
+
+leghexapod.InnerModel=/home/robocomp/robocomp/files/innermodel/hexapod.xml
+leghexapod.name = arm6
+leghexapod.m1 = arm6motor1
+leghexapod.m2 = arm6motor2
+leghexapod.m3 = arm6motor3
+leghexapod.foot=arm6TipT
+leghexapod.singleg= 1
+
+Ice.Warn.Connections=0
+Ice.Trace.Network=0
+Ice.Trace.Protocol=0
+Ice.ACM.Client=10
+Ice.ACM.Server=10
+
+

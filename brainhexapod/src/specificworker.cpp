@@ -84,15 +84,16 @@ void SpecificWorker::compute()
 {
 	if (allidel())
 	{
+		int i=0;
 		qDebug()<<"envio";
-		for(int i=0; i<6; i++)
-		{
+// 		for(int i=0; i<6; i++)
+// 		{
 			proxies[i]->move(0,30,pasostate[i]);
 			if(pasostate[i]=="paso")
 				pasostate[i]="empujar";
 			else
 				pasostate[i]="paso";
-		}
+// 		}
 	}
 }
 

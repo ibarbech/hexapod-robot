@@ -1,0 +1,37 @@
+hexapod{
+	states caminar, error_imu, error_timeout;
+	initial_state idel;
+	transition{
+		caminar => idel, error_timeout, error_imu;
+		idel =>idel, caminar;
+		error_timeout => idel;
+		error_imu => error_imu, idel;
+	};
+};
+
+:caminar parallel{
+	states leer_imu, leer_sensores, avanzar;
+	transition{
+		leer_imu => leer_imu;
+		leer_sensores => leer_sensores;
+	};
+};
+
+:avanzar{
+	states calcular_subobj;
+	initial_state moverse;
+	transition{
+		moverse => calcular_subobj;
+		calcular_subobj => moverse;
+	};
+};
+
+:moverse{
+	states paso, empujar;
+	initial_state comporbar_accion;
+	transition{
+		comporbar_accion => paso, empujar;
+		paso => paso;
+		empujar => empujar;
+	};
+};

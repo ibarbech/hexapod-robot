@@ -1,0 +1,17 @@
+import "/robocomp/interfaces/IDSLs/JointMotor.idsl";
+import "/robocomp/interfaces/IDSLs/LegController.idsl";
+import "/robocomp/interfaces/IDSLs/FootPreassureSensor.idsl";
+import "/robocomp/interfaces/IDSLs/IMU.idsl";
+
+Component leghexapod
+{
+	Communications
+	{
+		requires JointMotor, FootPreassureSensor, IMU;
+		implements LegController;
+	};
+	language Cpp;
+	statemachine "statemachine.smdsl";
+	//gui Qt(QWidget);
+};
+
