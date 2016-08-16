@@ -163,16 +163,16 @@ For to check the orientation the hexapod we will install the adapter IMU, that i
 
 For run the componet dynamixelpython we will follow the next steps:
 
-* We will move to directory "<use-name>/hexapod-robot/dynamixelpython":
+We will move to directory "<use-name>/hexapod-robot/dynamixelpython":
 
 	$ cd <use-name>/hexapod-robot/dynamixelpython
 
-* Execute these two line:
+Execute these two line:
 
 	$ cmake .
 	$ make -j2
 
-* Execute the next line:
+Execute the next line:
 
 	$ src/dynamixelpython.py etc/config
 
@@ -180,16 +180,16 @@ For run the componet dynamixelpython we will follow the next steps:
 
 For run the componet footpreassuresensor we will follow the next steps:
 
-* We will move to directory "<use-name>/hexapod-robot/footpreassuresensor":
+We will move to directory "<use-name>/hexapod-robot/footpreassuresensor":
 
 	$ cd <use-name>/hexapod-robot/footpreassuresensor
 
-* Execute these two line:
+Execute these two line:
 
 	$ cmake .
 	$ make -j2
 
-* Execute the next line:
+Execute the next line:
 
 	$ bin/FootPreassureSensor etc/config
 
@@ -197,16 +197,16 @@ For run the componet footpreassuresensor we will follow the next steps:
 
 For run the componet footpreassuresensor we will follow the next steps:
 
-* We will move to directory "home/robocomp/robocomp/components/robocomp-robolab/components/phidgetimu/":
+We will move to directory "home/robocomp/robocomp/components/robocomp-robolab/components/phidgetimu/":
 
 	$ cd home/robocomp/robocomp/components/robocomp-robolab/components/phidgetimu/
 
-* Execute these two line:
+Execute these two line:
 
 	$ cmake .
 	$ make -j2
 
-* Execute the next line:
+Execute the next line:
 
 	$ sudo bin/phidgetimu etc/config
 
