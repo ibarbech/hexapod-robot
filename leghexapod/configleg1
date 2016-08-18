@@ -7,8 +7,8 @@ LegController.Endpoints=tcp -p 18001
 
 # Proxies for required interfaces
 IMUProxy = imu:tcp -h odroid.local -p 10066
-#JointMotorProxy = jointmotor:tcp -h odroid.local -p 20000
-JointMotorProxy = jointmotor:tcp -h localhost -p 20000
+JointMotorProxy = jointmotor:tcp -h odroid.local -p 20000
+#JointMotorProxy = jointmotor:tcp -h localhost -p 20000
 FootPreassureSensorProxy = footpreassuresensor:tcp -h odroid.local -p 12000
 
 leghexapod.InnerModel=/home/robocomp/robocomp/files/innermodel/hexapod.xml
