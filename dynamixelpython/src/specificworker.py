@@ -209,13 +209,14 @@ class SpecificWorker(GenericWorker):
 	# getMotorState
 	#
 	def getMotorState(self, motor):
-		if motor in self.motorStateMap:
-			self.readState(motor)
-			return self.motorStateMap[motor]
-		else:
-			e = UnknownMotorException()
-			e.what = "Error " + motor + " does not exist"
-			raise e
+		for x in self.motorStateMap:
+			if x.name == motor:
+				self.readState(motor)
+				return self.motorStateMap[motor]
+
+		e = UnknownMotorException()
+		e.what = "Error " + motor + " does not exist"
+		raise e
 
 	#
 	# setSyncVelocity
