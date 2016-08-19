@@ -226,7 +226,7 @@ class SpecificWorker(GenericWorker):
 	# getMotorState
 	#
 	def getMotorState(self, motor):
-		for x in self.motorStateMap:
+		for x in self.motorParams:
 			if x.name == motor:
 				return self.motorStateMap[motor]
 		else:
