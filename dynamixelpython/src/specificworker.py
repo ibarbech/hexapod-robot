@@ -114,7 +114,7 @@ class SpecificWorker(GenericWorker):
 #####################################################
 	
 	@QtCore.Slot()
-	def readState(self, m):
+	def readState(self):
 		with QtCore.QMutexLocker(self.mutex_bus):
 			for x in self.motorParams:
 				try:
