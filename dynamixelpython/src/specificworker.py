@@ -119,11 +119,11 @@ class SpecificWorker(GenericWorker):
 			for x in self.motorParams:
 				try:
 					state = MotorState()
-					state.pos = float(dynamixel.get_position(self.bus, x.busId, prolijas=false, num_error_attempts=1))
+					state.pos = float(dynamixel.get_position(self.bus, x.busId, prolijas=False, num_error_attempts=1))
 					state.pos=(state.pos) * (2.618 + 2.618) / 1023 -2.618
 					if x.invertedSign == "true":
 						state.pos=-state.pos
-					state.isMoving = dynamixel.get_is_moving(self.bus, x.busId, prolijas=false, num_error_attempts=1)
+					state.isMoving = dynamixel.get_is_moving(self.bus, x.busId, prolijas=False, num_error_attempts=1)
 					self.motorStateMap[x.name] = state
 					#state.temperature=
 					#packet = packets.get_read_packet(m.busId,registers.PRESENT_TEMPERATURE,2)
@@ -197,8 +197,8 @@ class SpecificWorker(GenericWorker):
 							goal.position = -goal.position
 						pos = np.ushort((goal.position + 2.618) * (1023 - 0) / (2.618 + 2.618))
 						vel = np.ushort(goal.maxSpeed)
-						dynamixel.set_velocity(self.bus, busId, vel, prolijas=false, num_error_attempts=1)
-						dynamixel.set_position(self.bus, busId, pos, prolijas=false, num_error_attempts=1)
+						dynamixel.set_velocity(self.bus, busId, vel, prolijas=False, num_error_attempts=1)
+						dynamixel.set_position(self.bus, busId, pos, prolijas=False, num_error_attempts=1)
 					dynamixel.send_action_packet(self.bus)
 			except Ice.Exception, e:
 				traceback.print_exc()
