@@ -60,7 +60,7 @@ void SpecificWorker::compute()
 	char buff[96];// = "p1 1 p2 2 p3 3 p4 4 p5 5 p6 6";
 	int nb = serial.readLine(buff, 96);
 	
-	qDebug()<<buff;
+// 	qDebug()<<buff;
 
 	if(nb > 30)
 	{
@@ -85,7 +85,7 @@ void SpecificWorker::compute()
 			if(value == "p6")
 				name = leg6;
 			this->buffer[name] = ls[i+1].toInt();
-			qDebug() << QString::fromStdString(name) <<" "<< ls[i+1].toInt();
+// 			qDebug() << QString::fromStdString(name) <<" "<< ls[i+1].toInt();
 		}
 	 }
 	 else
