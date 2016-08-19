@@ -201,7 +201,7 @@ void SpecificWorker::fun_paso()
 		qDebug()<<__FUNCTION__<<(pos_foot-tmp).norm2()<<i;
 		updateinner();
 		
-		if(i==0 || (pos_foot-tmp).norm2()<1)
+		if(i==0 || (pos_foot-tmp).norm2()<10)
 		{
 			tmp=bezier3(ini,QVec::vec3(pos_center.x(),0,pos_center.z()),fin,i);
 			RoboCompLegController::PoseLeg p;
@@ -232,7 +232,7 @@ void SpecificWorker::fun_empujar()
 		static QVec tmp = QVec::vec3(0,0,0);
 		qDebug()<<__FUNCTION__<<(pos_foot-tmp).norm2()<<i;
 		updateinner();
-		if(i==0 || (pos_foot-tmp).norm2()<1)
+		if(i==0 || (pos_foot-tmp).norm2()<10)
 		{
 			tmp=bezier2(ini,fin,i);
 			RoboCompLegController::PoseLeg p;
