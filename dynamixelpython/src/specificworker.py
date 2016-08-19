@@ -129,7 +129,6 @@ class SpecificWorker(GenericWorker):
 					#packet = packets.get_read_packet(m.busId,registers.PRESENT_TEMPERATURE,2)
 										#packet = packets.get_read_packet(m.busId,registers.PRESENT_SPEED,2)
 										#print packet
-					return
 				except Exception, e:
 					print  e
 
