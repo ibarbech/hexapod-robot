@@ -250,3 +250,6 @@ if we want to see the pressure of each leg, we will run this componet with the n
 	$ make -j2
 	$ src/showSensorHexapod.py  etc/config
 
+##Video Hexapod Robolab UEX
+
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/zU3X3yfSZAQ/0.jpg)](https://www.youtube.com/embed/zU3X3yfSZAQ "Phantom-X - Stability - Robolab - UEX")
