@@ -67,6 +67,7 @@ public slots:
 
 //--------------------
 private:
+	QTimer tStabilize;
 	enum action {Paso,Empujar};
 	action act;
 	InnerModel *inner;
@@ -76,22 +77,24 @@ private:
 	double  coxa, femur, tibia, rPitch, rRoll;
 	int signleg;
 	QVec pos_foot, pos_center, ini, fin, center, obfin;
-	bool idel,subobje;
-	float i;
+	bool idel,subobje, finetapa = false;
+	float i, maxq1 = 1.6, minq1 = -1.6, maxq2 = 1.7, minq2 = -1.7, maxq3 = 2.0, minq3 = -1.1;
+	float INCREMENTO = 0.04;
 	RoboCompJointMotor::MotorStateMap statemap;
 	QMap<string,RoboCompJointMotor::MotorParams> motorsparams;
 	
 	void moverangles(QVec angles,double vel);
 	QVec movFoottoPoint(QVec p, bool &exito);
-	void stabilize();
+	void stabilize(QVec pos);
 	QVec bezier3(QVec p0, QVec p1, QVec p2, float t);
 	QVec bezier2(QVec p0, QVec p2, float t);
 	double mapear(double x, double in_min, double in_max, double out_min, double out_max);
 	void updateinner();
 	void go_poscenter();
+
 	
 private slots:
-
+	void Act_stabilize();
 	
 };
 

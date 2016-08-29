@@ -98,7 +98,7 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 // 	sleep(1);
 // 	updateinner();
 // 	qDebug()<<pos_foot;
-	sleep(10);
+	sleep(3);
 	connect(&timer, SIGNAL(timeout()), this, SLOT(stabilize()));
 // 	sleep(1);
 // 	hexapod.start();

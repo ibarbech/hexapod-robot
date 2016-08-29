@@ -161,27 +161,6 @@ class SpecificWorker(GenericWorker):
 			print e
 	
 	def ComprobarLista2(self):
-		"""		if len(self.L_L_Goals) < 6:
-							return
-						with QtCore.QMutexLocker(self.mutex_bus):
-							try:
-								for x in range(0,5):
-									m = self.L_L_Goals.pop(0)
-									for goal in m:
-										for x in self.motorParams:
-											if x.name == goal.name:
-												busId = x.busId
-												break
-										if x.invertedSign == "true":
-											goal.position=-goal.position
-										pos = np.ushort((goal.position + 2.618) * (1023 - 0) / (2.618 + 2.618))
-										vel = np.ushort(goal.maxSpeed)
-										dynamixel.set_velocity(self.bus,busId, vel)
-										dynamixel.set_position(self.bus, busId, pos)
-								dynamixel.send_action_packet(self.bus)
-							except Ice.Exception, e:
-								traceback.print_exc()
-								print e"""
 		if len(self.L_L_Goals) == 0:
 			return
 		with QtCore.QMutexLocker(self.mutex_bus):

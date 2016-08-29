@@ -82,29 +82,63 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 
 void SpecificWorker::compute()
 {
+// 	static int i = 0;
+// 	if(i==6)
+// 		i=0;
+// 	bool menor=true;
+// 	double incremento=0;
 	if (allidel())
 	{
-		int i=0;
-		qDebug()<<"envio";
-// 		for(int i=0; i<6; i++)
+// 		for(int i = 0; i<6; i++)
 // 		{
+// 			if(statelegs[i].y < -90)
+// 			{
+// 				menor=false;
+// 				break;
+// 			}
+// 		}
+// 		if(menor)
+// 			for(int i = 0; i<6; i++)
+// 				if(incremento < statelegs[i].y+96)
+// 					incremento = statelegs[i].y+96;
+// 		for(int i = 0; i<6; i++)
+// 		{
+// 			RoboCompLegController::PoseLeg p;
+// 			p.ref =  statelegs[i].ref;
+// 			p.vel = 50;
+// 			p.x = statelegs[i].x;
+// 			p.z = statelegs[i].z;
+// 			p.y = statelegs[i].y-incremento;
+// 			proxies[i]->setIKLeg(p,false);
+// 		}
+		for(int i = 0; i<6; i++)
+		{
+			qDebug()<<"envio a la pata "<< (i+1);
 			proxies[i]->move(0,30,pasostate[i]);
 			if(pasostate[i]=="paso")
 				pasostate[i]="empujar";
 			else
 				pasostate[i]="paso";
-// 		}
+		}
 	}
+	
 }
 
 bool SpecificWorker::allidel()
 {
+	bool noidel=true;
+	QString idel;
+	qDebug()<<"-----------------";
 	for(int i=0; i<6; i++)
 	{
 		if(statelegs[i].idel==false)
-			return false;
+		{
+			noidel=false;
+			qDebug()<<" Leg " << (i+1) << statelegs[i].idel;
+		}
 	}
-	return true;
+	qDebug()<<"-----------------";
+	return noidel;
 }
 
 void SpecificWorker::updatevalues()

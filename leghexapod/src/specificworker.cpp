@@ -16,8 +16,13 @@
  *    You should have received a copy of the GNU General Public License
  *    along with RoboComp.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include "specificworker.h"
 
+#define VEL 50
+#define ANTICIPACION 20
+#define SENSOR_SENSIBILITI 100
+#define ALT_CENTER -20	
 /**
 * \brief Default constructor
 */
@@ -82,13 +87,24 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 	qDebug()<<"    m2 = "<<motores.at(1);
 	qDebug()<<"    m2 = "<<motores.at(2);
 	qDebug()<<"-----------------------------";
-	QVec posini = QVec::vec3(0,0.35,-0.8);
+	float aux;
+	if(signleg==1)
+	{
+		aux=maxq3;
+		maxq3=-minq3;
+		minq3=-aux;
+	}
+	
+	QVec posini = QVec::vec3(0,0.35,-0.95);
 	moverangles(posini,0);
 	obfin = QVec::vec3(0,0,0);
 	sleep(1);
 	updateinner();
+	idel=true;
 	hexapod.start();
 	timer.start(10);
+// 	connect(&tStabilize, SIGNAL(timeout()), this, SLOT(Act_stabilize()));
+// 	tStabilize.start(200);
 	return true;
 }
 
@@ -99,16 +115,16 @@ void SpecificWorker::fun_caminar()
 
 void SpecificWorker::fun_error_imu()
 {
-// 	qDebug()<<__FUNCTION__;
-// 	updateinner();
-// 	stabilize();
-// 	RoboCompIMU::Orientation o = imu_proxy->getOrientation();
-// 	if(fabs(o.Pitch)>0.04||fabs(o.Roll)>0.04)
-// 	{
-// 		emit error_imutoerror_imu();
-// 		return;
-// 	}
-// 	emit error_imutoidel();
+	qDebug()<<__FUNCTION__;
+	updateinner();
+	RoboCompIMU::Orientation o = imu_proxy->getOrientation();
+	if(fabs(o.Pitch)>0.04||fabs(o.Roll)>0.04)
+	{
+		stabilize(pos_center);
+		emit error_imutoerror_imu();
+		return;
+	}
+	emit error_imutoidel();
 }
 
 void SpecificWorker::fun_error_timeout()
@@ -119,20 +135,17 @@ void SpecificWorker::fun_error_timeout()
 void SpecificWorker::fun_idel()
 {
 // 	qDebug()<<__FUNCTION__;
+	hexapod.blockSignals(false);
 	updateinner();
 	idel = true;
-	i=0;
+	i=INCREMENTO;
 	if(obfin != QVec::vec3(0,0,0))
 	{
 		idel = false;
-// 		if(act==paso)
-// 			act = empujar;
-// 		else
-// 			act = paso;
 		emit ideltocaminar();
 	}
 	else
-		emit ideltoidel();
+		hexapod.stop();
 }
 
 void SpecificWorker::fun_leer_imu()
@@ -142,7 +155,7 @@ void SpecificWorker::fun_leer_imu()
 	RoboCompIMU::Orientation o = imu_proxy->getOrientation();
 	if(fabs(o.Roll)>0.3||fabs(o.Pitch)>0.3)
 	{
-		go_poscenter();
+// 		go_poscenter();
 		emit caminartoerror_imu();
 		return;
 	}
@@ -153,13 +166,16 @@ void SpecificWorker::fun_leer_sensores()
 {
 	qDebug()<<__FUNCTION__;
 	updateinner();
-	if(footpreassuresensor_proxy->readSensor(nameLeg.toStdString()) > 400 && i>0.5)
+	if(footpreassuresensor_proxy->readSensor(nameLeg.toStdString()) > SENSOR_SENSIBILITI && i>0.6&& act == Paso)
 	{
+		qDebug()<<"---------------------------------emit caminartoidel"<<nameLeg;
 		obfin = QVec::vec3(0,0,0);
 		emit caminartoidel();
-		return;
+// 		idel = true;
+// 		hexapod.stop();
 	}
-	emit leer_sensorestoleer_sensores();
+	else
+		emit leer_sensorestoleer_sensores();
 }
 
 void SpecificWorker::fun_avanzar()
@@ -169,23 +185,25 @@ void SpecificWorker::fun_avanzar()
 
 void SpecificWorker::fun_calcular_subobj()
 {
-	qDebug()<<__FUNCTION__;
-	i=0;
-	if(obfin.y()==0)
+	if(obfin != QVec::vec3(0,0,0))
 	{
-		act=Empujar;
-		subobje = true;
-		obfin = QVec::vec3(obfin.x(),20,obfin.z());
+		qDebug()<<__FUNCTION__;
+		i=INCREMENTO;
+		if(obfin.y()==-10)
+		{
+			subobje = true;
+			obfin = QVec::vec3(obfin.x(),-30,obfin.z());
+		}
+		else
+		{
+			subobje = false;
+			int x = rand() % (((int)obfin.x()+10 + 1) - (int)obfin.x()-10) + (int)obfin.x()-10;
+			int z = rand() % (((int)obfin.z()+10 + 1) - (int)obfin.z()-10) + (int)obfin.z()-10;
+			center = QVec::vec3(0,0,0);
+			obfin = QVec::vec3(x,-10,z);
+		}
+		emit calcular_subobjtomoverse();
 	}
-	else
-	{
-		act=Paso;
-		subobje = false;
-		int x = rand() % (((int)obfin.x()+10 + 1) - (int)obfin.x()-10) + (int)obfin.x()-10;
-		int z = rand() % (((int)obfin.z()+10 + 1) - (int)obfin.z()-10) + (int)obfin.z()-10;
-		obfin = QVec::vec3(x,0,z);
-	}
-	emit calcular_subobjtomoverse();
 }
 
 void SpecificWorker::fun_moverse()
@@ -195,25 +213,32 @@ void SpecificWorker::fun_moverse()
 
 void SpecificWorker::fun_paso()
 {
-	if (i<=1)
+	static int intentos = 0;
+	if (intentos == 10 && i>INCREMENTO)
+		i-=INCREMENTO;
+	if (i<=1 && act == Paso && obfin != QVec::vec3(0,0,0))
 	{
 		static QVec tmp = QVec::vec3(0,0,0);
-		qDebug()<<__FUNCTION__<<(pos_foot-tmp).norm2()<<i;
+		qDebug()<<__FUNCTION__<<(pos_foot-tmp).norm2()<<i<< intentos;
 		updateinner();
 		
-		if(i==0 || (pos_foot-tmp).norm2()<10)
+		if(i == INCREMENTO || (pos_foot-tmp).norm2()<ANTICIPACION || intentos == 10)
 		{
-			tmp=bezier3(ini,QVec::vec3(pos_center.x(),0,pos_center.z()),fin,i);
+			intentos=0;
+			if (center!=QVec::vec3(0,0,0))
+				tmp=bezier3(ini,center,fin,i);
+			else
+				tmp=bezier2(ini,fin,i);
 			RoboCompLegController::PoseLeg p;
 			p.x=tmp.x();
 			p.y=tmp.y();
 			p.z=tmp.z();
 			p.ref=base.toStdString();
-			p.vel = 50;
+			p.vel = VEL;
 			
 			setIKLeg(p,false);
 			
-			i+=0.01;
+			i+=INCREMENTO;
 			if(i>1)
 			{
 // 				emit caminartoidel();
@@ -221,36 +246,46 @@ void SpecificWorker::fun_paso()
 				return;
 			}
 		}
+		else
+			intentos++;
 		emit pasotopaso();
 	}
 }
 
 void SpecificWorker::fun_empujar()
 {
-	if (i<=1)
+	static int intentos = 0;
+	if (intentos == 10 && i>INCREMENTO)
+		i-=INCREMENTO;
+	if (i<=1 && act == Empujar)
 	{
 		static QVec tmp = QVec::vec3(0,0,0);
 		qDebug()<<__FUNCTION__<<(pos_foot-tmp).norm2()<<i;
 		updateinner();
-		if(i==0 || (pos_foot-tmp).norm2()<10)
+		if(i==INCREMENTO || (pos_foot-tmp).norm2()<ANTICIPACION || intentos == 10)
 		{
+			intentos=0;
 			tmp=bezier2(ini,fin,i);
 			RoboCompLegController::PoseLeg p;
 			p.x=tmp.x();
 			p.y=tmp.y();
 			p.z=tmp.z();
 			p.ref=base.toStdString();
-			p.vel = 50;	
+			p.vel = VEL;	
 			setIKLeg(p,false);
 			
-			i+=0.01;
+			i+=2*INCREMENTO;
 			if(i>1)
 			{
-// 				emit caminartoidel();
-				emit moversetocalcular_subobj();
+				obfin = QVec::vec3(0,0,0);
+				emit caminartoidel();
+// 				idel = true;
+// 				hexapod.stop();
 				return;
 			}
 		}
+		else
+			intentos++;
 		emit empujartoempujar();
 	}
 }
@@ -259,28 +294,35 @@ void SpecificWorker::fun_comporbar_accion()
 {
 	qDebug()<<__FUNCTION__;
 	updateinner();
-	if(act == Paso)
+	if(obfin != QVec::vec3(0,0,0))
 	{
-		ini = pos_foot;
-		fin = pos_center + obfin;
-		center = QVec::vec3((fin.x()+ini.x())/2,0,(fin.z()+ini.z())/2);
-		emit comporbar_acciontopaso();
-	}
-	else
-	{
-		i=0;
-		ini = pos_foot;
-		if(!subobje)
-			fin = pos_center - obfin;
-		else
+		if(act == Paso)
+		{
+			ini = pos_foot;
 			fin = pos_center + obfin;
-		emit comporbar_acciontoempujar();
+			if(!subobje)
+				center = QVec::vec3((fin.x()+ini.x())/2,ALT_CENTER,(fin.z()+ini.z())/2);
+			else
+				center = QVec::vec3(0,0,0);
+			emit comporbar_acciontopaso();
+		}
+		else
+		{
+			ini = pos_foot;
+			fin = pos_center - obfin;
+			if(pos_foot.y()>-90)
+			{
+				fin = QVec::vec3(fin.x(),pos_foot.y(),fin.z());
+			}
+			emit comporbar_acciontoempujar();
+		}
 	}
+	return;
 }
 
 StateLeg SpecificWorker::getStateLeg()
 {
-	qDebug()<<__FUNCTION__;
+// 	qDebug()<<__FUNCTION__;
 	StateLeg state;
 	state.ismoving=false;
 	RoboCompLegController::Statemotor aux[3];
@@ -327,7 +369,8 @@ void SpecificWorker::move(const float x, const float y, const string& state)
 		act=Paso;
 	else
 		act=Empujar;
-	obfin = QVec::vec3(x,0,y);
+	obfin = QVec::vec3(x,-10,y);
+	hexapod.start();
 }
 
 bool SpecificWorker::setListIKLeg(const ListPoseLeg &ps, const bool &simu)
@@ -396,8 +439,8 @@ bool SpecificWorker::setFKLeg(const AnglesLeg &al, const bool &simu)
 	try
 	{
 		QVec angles=QVec::vec3(al.q1,al.q2,al.q3);
-		double max=M_PI/2, min=- M_PI/2;
-		if((min<al.q1&&al.q1<max)&&(min<al.q2&&al.q2<max)&&(min<al.q3&&al.q3<max))
+// 		double max=M_PI/2, min=- M_PI/2;
+		if((minq1<al.q1&&al.q1<maxq1)&&(minq2<al.q2*signleg&&al.q2*signleg<maxq2)&&(minq3<al.q3*signleg&&al.q3*signleg<maxq3))
 			exito=true;
 		if(exito&&!simu)
 			moverangles(angles, al.vel);
@@ -435,10 +478,12 @@ QVec SpecificWorker::movFoottoPoint(QVec p, bool &exito)
 		q1=atan2(x,z);
 		q3=atan2(senq3,cosq3);
 		q2=atan2(y,r)-atan2((tibia*senq3),(femur+(tibia*cosq3)));
+		q1+=statemap[motores.at(0).toStdString()].pos;
 		q2 += 0.22113;
 		q3 += 0.578305;
-		double max=M_PI/2+0.15, min=- M_PI/2-0.15;
-		if((min<q1&&q1<max)&&(min<q2&&q2<max)&&(min<q3&&q3<max)){
+		exito = true;
+//  		double max=M_PI/2+0.15, min=- M_PI/2-0.15;
+		if((minq1<q1&&q1<maxq1)&&(minq2<q2*signleg&&q2*signleg<maxq2)&&(minq3<q3*signleg&&q3*signleg<maxq3)){
 			exito=true;
 		}
 		else
@@ -453,7 +498,7 @@ QVec SpecificWorker::movFoottoPoint(QVec p, bool &exito)
 		exito=false;
 	}
 	
-	angles(0)=q1+statemap[motores.at(0).toStdString()].pos/*+motorsparams[motores.at(0).toStdString()].offset*/;
+	angles(0)=q1/*+motorsparams[motores.at(0).toStdString()].offset*/;
 	angles(1)=q2/*+motorsparams[motores.at(1).toStdString()].offset*/;
 	angles(2)=q3/*+motorsparams[motores.at(2).toStdString()].offset*/;
 	return angles;
@@ -504,16 +549,17 @@ void SpecificWorker::moverangles(QVec angles,double vel)
 
 }
 
-void SpecificWorker::stabilize()
+void SpecificWorker::stabilize(QVec pos)
 {
 	updateinner();
+	QVec stabilize_pos = pos;
 	RoboCompIMU::Orientation o = imu_proxy->getOrientation();
 	RoboCompJointMotor::MotorStateMap ms;
 	jointmotor_proxy->getAllMotorState(ms);
 	for(RoboCompJointMotor::MotorStateMap::iterator it = ms.begin(); it != ms.end(); it++)
 		if(it->second.isMoving)
 			return;
-	if(fabs(o.Pitch)>0.04||fabs(o.Roll)>0.04)
+	if(fabs(o.Pitch)>0.1||fabs(o.Roll)>0.1)
 	{
 		RoboCompLegController::PoseBody p;
 		InnerModelTransform* t = inner->getTransform(base);
@@ -525,9 +571,9 @@ void SpecificWorker::stabilize()
 		p.ry = 0;
 		p.rz = o.Roll + t->getRzValue();
 		p.vel = 150;
-		p.px = pos_foot.x();
-		p.pz = pos_foot.z();
-		p.py = pos_foot.y();
+		p.px = stabilize_pos.x();
+		p.pz = stabilize_pos.z();
+		p.py = stabilize_pos.y();
 		setIKBody(p,false);
 	}
 }
@@ -583,3 +629,10 @@ void SpecificWorker::go_poscenter()
 	setIKLeg(p,false);
 }
 
+void SpecificWorker::Act_stabilize()
+{
+//  	qDebug()<<__FUNCTION__;
+	updateinner();
+	if(idel)
+		stabilize(pos_foot);
+}
