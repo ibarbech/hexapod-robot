@@ -17,6 +17,7 @@
  *    along with RoboComp.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "specificworker.h"
+#include <qt4/QtGui/qpushbutton.h>
 
 /**
 * \brief Default constructor
@@ -39,6 +40,7 @@ SpecificWorker::SpecificWorker(MapPrx& mprx) : GenericWorker(mprx)
 	show();
 	clkupdate.start(10);
 	connect(&clkupdate, SIGNAL(timeout()), this, SLOT(updatevalues()));
+	connect(stop, SIGNAL(clicked()), this, SLOT(Stop()));
 }
 
 /**
@@ -72,7 +74,7 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 		statelegs[i] = proxies[i]->getStateLeg();
 		legsp[i]=QVec::vec3(statelegs[i].x,statelegs[i].y,statelegs[i].z);
 	}
-	
+	stop_hexapod=true;
 	timer.start(Period);
 	
 	
@@ -82,43 +84,58 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 
 void SpecificWorker::compute()
 {
+	static int cuenta=0;
+	int x = 0, y = 30;
 // 	static int i = 0;
 // 	if(i==6)
 // 		i=0;
 // 	bool menor=true;
 // 	double incremento=0;
-	if (allidel())
+	if(stop_hexapod)
 	{
-// 		for(int i = 0; i<6; i++)
-// 		{
-// 			if(statelegs[i].y < -90)
-// 			{
-// 				menor=false;
-// 				break;
-// 			}
-// 		}
-// 		if(menor)
-// 			for(int i = 0; i<6; i++)
-// 				if(incremento < statelegs[i].y+96)
-// 					incremento = statelegs[i].y+96;
-// 		for(int i = 0; i<6; i++)
-// 		{
-// 			RoboCompLegController::PoseLeg p;
-// 			p.ref =  statelegs[i].ref;
-// 			p.vel = 50;
-// 			p.x = statelegs[i].x;
-// 			p.z = statelegs[i].z;
-// 			p.y = statelegs[i].y-incremento;
-// 			proxies[i]->setIKLeg(p,false);
-// 		}
-		for(int i = 0; i<6; i++)
+		cuenta=0;
+		if (allidel())
 		{
-			qDebug()<<"envio a la pata "<< (i+1);
-			proxies[i]->move(0,30,pasostate[i]);
-			if(pasostate[i]=="paso")
-				pasostate[i]="empujar";
-			else
-				pasostate[i]="paso";
+	// 		for(int i = 0; i<6; i++)
+	// 		{
+	// 			if(statelegs[i].y < -90)
+	// 			{
+	// 				menor=false;
+	// 				break;
+	// 			}
+	// 		}
+	// 		if(menor)
+	// 			for(int i = 0; i<6; i++)
+	// 				if(incremento < statelegs[i].y+96)
+	// 					incremento = statelegs[i].y+96;
+	// 		for(int i = 0; i<6; i++)
+	// 		{
+	// 			RoboCompLegController::PoseLeg p;
+	// 			p.ref =  statelegs[i].ref;
+	// 			p.vel = 50;
+	// 			p.x = statelegs[i].x;
+	// 			p.z = statelegs[i].z;
+	// 			p.y = statelegs[i].y-incremento;
+	// 			proxies[i]->setIKLeg(p,false);
+	// 		}
+			for(int i = 0; i<6; i++)
+			{
+				qDebug()<<"envio a la pata "<< (i+1);
+				proxies[i]->move(x,y,pasostate[i]);
+				if(pasostate[i]=="paso")
+					pasostate[i]="empujar";
+				else
+					pasostate[i]="paso";
+			}
+		}
+	}
+	else
+	{ 
+		if(cuenta==0)
+		{
+			cuenta=1;
+			for(int i = 0; i<6; i++)
+				proxies[i]->move(0,0,pasostate[i]);
 		}
 	}
 	
@@ -157,6 +174,16 @@ void SpecificWorker::updatevalues()
 	osgView->autoResize();
 	osgView->frame();
 }
+
+void SpecificWorker::Stop()
+{
+	stop_hexapod=!stop_hexapod;
+	if(!stop_hexapod)
+		stop->setText("Start");
+	else
+		stop->setText("Stop");
+}
+
 
 
 

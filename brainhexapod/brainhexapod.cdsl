@@ -1,10 +1,12 @@
 import "/robocomp/interfaces/IDSLs/LegController.idsl";
+import "/robocomp/robocomp/interfaces/IDSLs/JoystickAdapter.idsl";
 
 Component brainhexapod
 {
 	Communications
 	{
 		requires LegController,LegController,LegController,LegController,LegController,LegController;
+		//subscribesTo JoystickAdapter;
 	};
 	language Cpp;
 	gui Qt(QWidget);

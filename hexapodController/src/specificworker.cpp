@@ -74,6 +74,7 @@ SpecificWorker::SpecificWorker(MapPrx& mprx) : GenericWorker(mprx)
 	show();
 	clk.start(100);
 	clkupdate.start(10);
+	lrot=QVec::vec3(0,0,0);
 // 	connect(Start, SIGNAL(clicked()), this, SLOT(iniciar()));
 // 	connect(Stop, SIGNAL(clicked()), this, SLOT(parar()));
 	connect(&clkupdate, SIGNAL(timeout()), this, SLOT(updateStates()));
@@ -298,6 +299,7 @@ bool SpecificWorker::caminar3x3()
 bool SpecificWorker::rotar()
 {
 	static bool estado=true;
+	static QVec ini[6],fin[6];
 	if(lrot!=QVec::vec3(0, 0, 0))
 	{
 		static float i=0;
@@ -311,48 +313,49 @@ bool SpecificWorker::rotar()
 		
 		if(!ismoving)
 		{
+			
 			if(i==0)
-				for(int i=0;i<6;i++)
-					pre_statelegs[i]=statelegs[i];
-			QVec ini,fin;
+			{
+				for(int h=0;h<6;h++)
+				{
+					
+					pre_statelegs[h]=statelegs[h];
+					RoboCompLegController::StateLeg st=pre_statelegs[h];
+// 					QVec pose = legsp[h];
+					ini[h]=QVec::vec3(st.x,st.y,st.z);
+					if(estado)
+						if(h==2 || h==3)
+							fin[h] = QVec::vec3(legsp[h].x()+lrot.x(),legsp[h].y()+lrot.y(),legsp[h].z()+lrot.z());
+						else
+							fin[h] = QVec::vec3(legsp[h].x()-lrot.x(),legsp[h].y()-lrot.y(),legsp[h].z()-lrot.z());
+					else
+						if(h==2 || h==3)
+							fin[h] = QVec::vec3(legsp[h].x()-lrot.x(),legsp[h].y()-lrot.y(),legsp[h].z()-lrot.z());
+						else
+							fin[h] = QVec::vec3(legsp[h].x()+lrot.x(),legsp[h].y()+lrot.y(),legsp[h].z()+lrot.z());
+				}
+				
+			}
 			for(int j=0;j<6;j++)
 			{
-				RoboCompLegController::StateLeg st=pre_statelegs[j];
-				QVec posini =QVec::vec3(st.x,legsp[j].y(),st.z);
-				if((j==2 || j==3))
-				{
-					ini = posini;
-					if(estado)
-						fin = legsp[j]+lrot;
-					else
-						fin = legsp[j]-lrot;
-				}
-				else
-				{
-					ini = posini;
-					if(estado)
-						fin = legsp[j]-lrot;
-					else
-						fin = legsp[j]+lrot;
-				}
 				QVec tmp;
 				if(estado)
 					if(j==0||j==3||j==4)
-						tmp=bezier3(ini,bezier2(ini,fin,0.5)+lmed,fin,i);
+						tmp=bezier3(ini[j],bezier2(ini[j],fin[j],0.5)+lmed,fin[j],i);
 					else
-						tmp = bezier2(ini,fin,i);
+						tmp = bezier2(ini[j],fin[j],i);
 				else
 					if(j==0||j==3||j==4)
-						tmp = bezier2(ini,fin,i);
+						tmp = bezier2(ini[j],fin[j],i);
 					else
-						tmp=bezier3(ini,bezier2(ini,fin,0.5)+lmed,fin,i);
+						tmp=bezier3(ini[j],bezier2(ini[j],fin[j],0.5)+lmed,fin[j],i);
 				
 				RoboCompLegController::PoseLeg p;
 				p.x   = tmp.x();
 				p.y   = tmp.y();
 				p.z   = tmp.z();
 				p.ref = base.toStdString();
-				p.vel = 6;
+				p.vel = vel;
 				proxies[j]->setIKLeg(p,false);
 			}
 			i+=tbezier;
@@ -733,7 +736,6 @@ void SpecificWorker::ResetSlider()
 	sliderX->setSliderPosition(0);
 	sliderY->setSliderPosition(0);
 	sliderZ->setSliderPosition(0);
-	sliderVel->setSliderPosition(0);
 	update();
 }
 

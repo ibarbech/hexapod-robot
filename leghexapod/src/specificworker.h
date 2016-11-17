@@ -79,7 +79,7 @@ private:
 	QVec pos_foot, pos_center, ini, fin, center, obfin;
 	bool idel,subobje, finetapa = false;
 	float i, maxq1 = 1.6, minq1 = -1.6, maxq2 = 1.7, minq2 = -1.7, maxq3 = 2.0, minq3 = -1.1;
-	float INCREMENTO = 0.04;
+	float INCREMENTO = 0.05;
 	RoboCompJointMotor::MotorStateMap statemap;
 	QMap<string,RoboCompJointMotor::MotorParams> motorsparams;
 	

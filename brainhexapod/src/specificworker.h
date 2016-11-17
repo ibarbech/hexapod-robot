@@ -57,8 +57,10 @@ private:
 	QVec legsp[6];	
 	string pasostate[6];
 	bool allidel();
+	bool stop_hexapod;
 private slots:
 	void updatevalues();
+	void Stop();
 	
 };
 

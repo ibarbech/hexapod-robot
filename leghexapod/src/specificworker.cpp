@@ -18,9 +18,9 @@
  */
 
 #include "specificworker.h"
-
+#define printer 1
 #define VEL 50
-#define ANTICIPACION 20
+#define ANTICIPACION 30
 #define SENSOR_SENSIBILITI 100
 #define ALT_CENTER -20	
 /**
@@ -95,16 +95,16 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 		minq3=-aux;
 	}
 	
-	QVec posini = QVec::vec3(0,0.35,-0.95);
-	moverangles(posini,0);
+	QVec posini = QVec::vec3(0,0.25,-1.1);
+	moverangles(posini,50);
 	obfin = QVec::vec3(0,0,0);
 	sleep(1);
 	updateinner();
 	idel=true;
-	hexapod.start();
+// 	hexapod.start();
 	timer.start(10);
-// 	connect(&tStabilize, SIGNAL(timeout()), this, SLOT(Act_stabilize()));
-// 	tStabilize.start(200);
+	connect(&tStabilize, SIGNAL(timeout()), this, SLOT(Act_stabilize()));
+//  	tStabilize.start(200);
 	return true;
 }
 
@@ -115,7 +115,8 @@ void SpecificWorker::fun_caminar()
 
 void SpecificWorker::fun_error_imu()
 {
-	qDebug()<<__FUNCTION__;
+	if(printer!=0)
+		qDebug()<<__FUNCTION__;
 	updateinner();
 	RoboCompIMU::Orientation o = imu_proxy->getOrientation();
 	if(fabs(o.Pitch)>0.04||fabs(o.Roll)>0.04)
@@ -134,7 +135,7 @@ void SpecificWorker::fun_error_timeout()
 
 void SpecificWorker::fun_idel()
 {
-// 	qDebug()<<__FUNCTION__;
+	qDebug()<<__FUNCTION__<<nameLeg;
 	hexapod.blockSignals(false);
 	updateinner();
 	idel = true;
@@ -150,29 +151,30 @@ void SpecificWorker::fun_idel()
 
 void SpecificWorker::fun_leer_imu()
 {
-	qDebug()<<__FUNCTION__;
-	updateinner();
-	RoboCompIMU::Orientation o = imu_proxy->getOrientation();
-	if(fabs(o.Roll)>0.3||fabs(o.Pitch)>0.3)
-	{
-// 		go_poscenter();
-		emit caminartoerror_imu();
-		return;
-	}
-	emit leer_imutoleer_imu();
+// 	if(printer!=0)
+// 		qDebug()<<__FUNCTION__;
+// 	updateinner();
+// 	RoboCompIMU::Orientation o = imu_proxy->getOrientation();
+// 	if(fabs(o.Roll)>0.3||fabs(o.Pitch)>0.3)
+// 	{
+// // 		go_poscenter();
+// 		emit caminartoerror_imu();
+// 		return;
+// 	}
+// 	emit leer_imutoleer_imu();
 }
 
 void SpecificWorker::fun_leer_sensores()
 {
-	qDebug()<<__FUNCTION__;
+	if(printer!=0)
+		qDebug()<<__FUNCTION__;
 	updateinner();
 	if(footpreassuresensor_proxy->readSensor(nameLeg.toStdString()) > SENSOR_SENSIBILITI && i>0.6&& act == Paso)
 	{
 		qDebug()<<"---------------------------------emit caminartoidel"<<nameLeg;
 		obfin = QVec::vec3(0,0,0);
 		emit caminartoidel();
-// 		idel = true;
-// 		hexapod.stop();
+		hexapod.blockSignals(true);
 	}
 	else
 		emit leer_sensorestoleer_sensores();
@@ -187,7 +189,8 @@ void SpecificWorker::fun_calcular_subobj()
 {
 	if(obfin != QVec::vec3(0,0,0))
 	{
-		qDebug()<<__FUNCTION__;
+		if(printer!=0)
+			qDebug()<<__FUNCTION__;
 		i=INCREMENTO;
 		if(obfin.y()==-10)
 		{
@@ -219,7 +222,8 @@ void SpecificWorker::fun_paso()
 	if (i<=1 && act == Paso && obfin != QVec::vec3(0,0,0))
 	{
 		static QVec tmp = QVec::vec3(0,0,0);
-		qDebug()<<__FUNCTION__<<(pos_foot-tmp).norm2()<<i<< intentos;
+		if(printer!=0)
+			qDebug()<<__FUNCTION__<<(pos_foot-tmp).norm2()<<i<< intentos;
 		updateinner();
 		
 		if(i == INCREMENTO || (pos_foot-tmp).norm2()<ANTICIPACION || intentos == 10)
@@ -239,8 +243,9 @@ void SpecificWorker::fun_paso()
 			setIKLeg(p,false);
 			
 			i+=INCREMENTO;
-			if(i>1)
+			if(i>=0.95)
 			{
+// 				qDebug()<<"---------------------------------emit caminartoidel"<<nameLeg;
 // 				emit caminartoidel();
 				emit moversetocalcular_subobj();
 				return;
@@ -260,7 +265,8 @@ void SpecificWorker::fun_empujar()
 	if (i<=1 && act == Empujar)
 	{
 		static QVec tmp = QVec::vec3(0,0,0);
-		qDebug()<<__FUNCTION__<<(pos_foot-tmp).norm2()<<i;
+		if(printer!=0)
+			qDebug()<<__FUNCTION__<<(pos_foot-tmp).norm2()<<i;
 		updateinner();
 		if(i==INCREMENTO || (pos_foot-tmp).norm2()<ANTICIPACION || intentos == 10)
 		{
@@ -292,7 +298,8 @@ void SpecificWorker::fun_empujar()
 
 void SpecificWorker::fun_comporbar_accion()
 {
-	qDebug()<<__FUNCTION__;
+	if(printer!=0)
+		qDebug()<<__FUNCTION__;
 	updateinner();
 	if(obfin != QVec::vec3(0,0,0))
 	{
@@ -322,7 +329,8 @@ void SpecificWorker::fun_comporbar_accion()
 
 StateLeg SpecificWorker::getStateLeg()
 {
-// 	qDebug()<<__FUNCTION__;
+// 	if(printer!=0)
+// 		qDebug()<<__FUNCTION__;
 	StateLeg state;
 	state.ismoving=false;
 	RoboCompLegController::Statemotor aux[3];
@@ -363,7 +371,8 @@ StateLeg SpecificWorker::getStateLeg()
 
 void SpecificWorker::move(const float x, const float y, const string& state)
 {
-	qDebug()<<__FUNCTION__;
+	if(printer!=0)
+		qDebug()<<__FUNCTION__;
 	idel=false;
 	if(state=="paso")
 		act=Paso;
@@ -631,7 +640,8 @@ void SpecificWorker::go_poscenter()
 
 void SpecificWorker::Act_stabilize()
 {
-//  	qDebug()<<__FUNCTION__;
+//  if(printer!=0)
+// 		qDebug()<<__FUNCTION__;
 	updateinner();
 	if(idel)
 		stabilize(pos_foot);

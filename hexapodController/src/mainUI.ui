@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>784</width>
-    <height>616</height>
+    <width>1598</width>
+    <height>954</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,8 +18,8 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>761</width>
-     <height>340</height>
+     <width>1451</width>
+     <height>711</height>
     </rect>
    </property>
    <property name="frameShape">
@@ -33,7 +33,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>360</y>
+     <y>740</y>
      <width>220</width>
      <height>27</height>
     </rect>
@@ -93,7 +93,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>390</y>
+     <y>770</y>
      <width>121</width>
      <height>27</height>
     </rect>
@@ -132,9 +132,9 @@
   <widget class="QSplitter" name="splitter_27">
    <property name="geometry">
     <rect>
-     <x>270</x>
-     <y>380</y>
-     <width>401</width>
+     <x>340</x>
+     <y>750</y>
+     <width>561</width>
      <height>201</height>
     </rect>
    </property>
@@ -307,7 +307,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>440</y>
+     <y>810</y>
      <width>121</width>
      <height>131</height>
     </rect>
@@ -334,9 +334,9 @@
   <widget class="QSplitter" name="splitter_30">
    <property name="geometry">
     <rect>
-     <x>140</x>
-     <y>410</y>
-     <width>111</width>
+     <x>190</x>
+     <y>780</y>
+     <width>131</width>
      <height>181</height>
     </rect>
    </property>
