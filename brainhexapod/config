@@ -1,0 +1,28 @@
+CommonBehavior.Endpoints=tcp -p 13003
+
+
+# Proxies for required interfaces
+LegController1Proxy = legcontroller:tcp -h localhost -p 18001
+LegController2Proxy = legcontroller:tcp -h localhost -p 18002
+LegController3Proxy = legcontroller:tcp -h localhost -p 18003
+LegController4Proxy = legcontroller:tcp -h localhost -p 18004
+LegController5Proxy = legcontroller:tcp -h localhost -p 18005
+LegController6Proxy = legcontroller:tcp -h localhost -p 18006
+
+
+
+Ice.Warn.Connections=0
+Ice.Trace.Network=0
+Ice.Trace.Protocol=0
+Ice.ACM.Client=10
+Ice.ACM.Server=10
+
+brainhexapod.floor=floor
+brainhexapod.base=base
+brainhexapod.InnerModel=/home/robocomp/robocomp/files/innermodel/hexapod.xml
+brainhexapod.nameleg1=arm1TipT
+brainhexapod.nameleg2=arm2TipT
+brainhexapod.nameleg3=arm3TipT
+brainhexapod.nameleg4=arm4TipT
+brainhexapod.nameleg5=arm5TipT
+brainhexapod.nameleg6=arm6TipT
