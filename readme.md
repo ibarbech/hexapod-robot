@@ -157,6 +157,12 @@ For to check the orientation the hexapod we will install the adapter IMU, that i
 
 ![IMU](img/IMU.jpg)
 
+###State Machine Hexapod
+
+The leghexapod componet have a state machine for moving.
+
+![State Machine Hexapod](img/state_machine_hexapod.jpg)
+
 ###Run the components in Odroid
 
 ####dynamixelphython
